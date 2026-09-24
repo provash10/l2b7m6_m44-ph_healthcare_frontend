@@ -1,0 +1,8 @@
+bun add zod @tanstack/react-query @tanstack/react-form ofetch
+
+
+https://tanstack.com/query/latest/docs/framework/react/quick-start
+Guides >>>Advanced Server Rendering >>>
+https://tanstack.com/query/latest/docs/framework/react/guides/advanced-ssr
+
+
