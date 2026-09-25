@@ -6,3 +6,6 @@ Guides >>>Advanced Server Rendering >>>
 https://tanstack.com/query/latest/docs/framework/react/guides/advanced-ssr
 
 
+shadcn ui- field
+bunx --bun shadcn@latest add field
+bunx --bun shadcn@latest add input
