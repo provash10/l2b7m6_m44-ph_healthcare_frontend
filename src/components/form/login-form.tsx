@@ -4,12 +4,16 @@ import { useForm } from "@tanstack/react-form";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { LoginSchema } from "@/validation";
 
 export default function LoginForm() {
   const form = useForm({
     defaultValues: {
       email: "",
       password: "",
+    },
+    validators: {
+      onSubmit: LoginSchema,
     },
     onSubmit: async ({ value }) => {
       console.log(value);
@@ -35,26 +39,23 @@ export default function LoginForm() {
       >
         <form.Field name="email">
           {(field) => {
+            const isInvalid =
+              field.state.meta.isTouched && !field.state.meta.isValid;
             return (
-              <Field>
+              <Field data-invalid={isInvalid}>
                 <FieldLabel htmlFor={field.name}>Email</FieldLabel>
                 <Input
                   id={field.name}
                   name={field.name}
                   type="email"
                   placeholder="m@example.com"
+                  autoComplete="off"
                   value={field.state.value}
+                  aria-invalid={isInvalid}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
                 />
-                {field.state.meta.errors.length > 0 && (
-                  <FieldError
-                    errors={field.state.meta.errors.map((error) => ({
-                      message:
-                        typeof error === "string" ? error : error?.message,
-                    }))}
-                  />
-                )}
+                {isInvalid && <FieldError errors={field.state.meta.errors} />}
               </Field>
             );
           }}
@@ -62,8 +63,10 @@ export default function LoginForm() {
 
         <form.Field name="password">
           {(field) => {
+            const isInvalid =
+              field.state.meta.isTouched && !field.state.meta.isValid;
             return (
-              <Field>
+              <Field data-invalid={isInvalid}>
                 <div className="flex items-center justify-between">
                   <FieldLabel htmlFor={field.name}>Password</FieldLabel>
                 </div>
@@ -71,18 +74,13 @@ export default function LoginForm() {
                   id={field.name}
                   name={field.name}
                   type="password"
+                  autoComplete="off"
                   value={field.state.value}
+                  aria-invalid={isInvalid}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
                 />
-                {field.state.meta.errors.length > 0 && (
-                  <FieldError
-                    errors={field.state.meta.errors.map((error) => ({
-                      message:
-                        typeof error === "string" ? error : error?.message,
-                    }))}
-                  />
-                )}
+                {isInvalid && <FieldError errors={field.state.meta.errors} />}
               </Field>
             );
           }}
