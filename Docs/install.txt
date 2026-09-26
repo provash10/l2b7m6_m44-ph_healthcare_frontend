@@ -1,3 +1,5 @@
+***** for logo --- use Logoipsum website = https://logoipsum.com
+
 bun add zod @tanstack/react-query @tanstack/react-form ofetch
 
 
@@ -9,3 +11,10 @@ https://tanstack.com/query/latest/docs/framework/react/guides/advanced-ssr
 shadcn ui- field
 bunx --bun shadcn@latest add field
 bunx --bun shadcn@latest add input
+
+======================
+google = ofetch github-- https://github.com/unjs/ofetch
+
+parsing Response
+const { users } = await ofetch("/api/users");
+
