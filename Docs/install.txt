@@ -18,3 +18,6 @@ google = ofetch github-- https://github.com/unjs/ofetch
 parsing Response
 const { users } = await ofetch("/api/users");
 
+bunx --bun shadcn@latest add toast
+bunx --bun shadcn@latest add spinner
+

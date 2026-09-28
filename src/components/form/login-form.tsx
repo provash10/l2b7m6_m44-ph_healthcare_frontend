@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { loginSchema } from "@/validation";
 import { useLogin } from "@/hooks";
 import { useRouter } from "next/navigation";
+import { toast } from "@/components/ui/toast";
+import { Spinner } from "../ui/spinner";
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -33,10 +35,20 @@ export default function LoginForm() {
       login(loginData, {
         onSuccess: (res) => {
           // console.log(res);
+          toast.add({
+  title: "Login Success",
+  description: "Welcome Back",
+  type : "success"
+})
           router.push("/");
         },
         onError: (err) => {
           console.log(err);
+           toast.add({
+  title: "Authentication Failure",
+  description: err.message || "Something went wrong. Please try again later",
+  type : "error",
+})
         },
       });
     },
@@ -115,7 +127,9 @@ export default function LoginForm() {
             }}
           </form.Field>
 
-          <Button type="submit">Submit</Button>
+          <Button disabled={loginPending} type="submit">
+            {loginPending ? <> <Spinner/> submitting</> : "Submit"}
+           </Button>
         </FieldGroup>
       </form>
     </div>
