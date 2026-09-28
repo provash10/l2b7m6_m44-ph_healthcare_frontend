@@ -6,21 +6,39 @@ import { useForm } from "@tanstack/react-form";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { LoginSchema } from "@/validation";
+import { loginSchema } from "@/validation";
+import { useLogin } from "@/hooks";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const router =useRouter();
+
+  const { mutate: login, isPending: loginPending } = useLogin();
 
   const form = useForm({
     defaultValues: {
-      email: "",
-      password: "",
+      email: "superadmin@gmail.com",
+      password: "Super@admin12345",
     },
     validators: {
-      onSubmit: LoginSchema,
+      onSubmit: loginSchema,
     },
-    onSubmit: async ({ value }) => {
-      console.log(value);
+    onSubmit: ({ value }) => {
+      const loginData = {
+        email: value.email,
+        password: value.password,
+      };
+
+      login(loginData, {
+        onSuccess: (res) => {
+          // console.log(res);
+          router.push("/");
+        },
+        onError: (err) => {
+          console.log(err);
+        },
+      });
     },
   });
 
