@@ -21,3 +21,11 @@ const { users } = await ofetch("/api/users");
 bunx --bun shadcn@latest add toast
 bunx --bun shadcn@latest add spinner
 
+
+45-5
+react-oauth/google
+https://www.npmjs.com/package/@react-oauth/google
+npm i @react-oauth/google
+Demo & How to use to fetch user details
+https://react-oauth.vercel.app/
+

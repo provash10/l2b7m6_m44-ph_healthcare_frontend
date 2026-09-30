@@ -1,6 +1,13 @@
-import type { ReactNode } from "react";
-import QueryProviders from "./query.provider";
+"use client";
+
+import { ReactNode } from "react";
+import QueryProvider from "./query.provider";
+import GoogleAuthProvider from "./google-auth.provider";
 
 export default function Providers({ children }: { children: ReactNode }) {
-  return <QueryProviders>{children}</QueryProviders>;
+  return (
+    <GoogleAuthProvider>
+      <QueryProvider>{children}</QueryProvider>
+    </GoogleAuthProvider>
+  );
 }
