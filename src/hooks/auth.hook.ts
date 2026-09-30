@@ -17,5 +17,6 @@ export function useGetMyProfile(){
     return useQuery({
         queryKey: ["user"],
         queryFn : getMyProfile,
+        retry: false,
     })
 }
