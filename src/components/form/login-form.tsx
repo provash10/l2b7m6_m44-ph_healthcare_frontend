@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { loginSchema } from "@/validation";
-import { useLogin } from "@/hooks";
+import { useGoogleOAuth, useLogin } from "@/hooks";
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/toast";
 import { Spinner } from "../ui/spinner";
@@ -18,6 +18,7 @@ export default function LoginForm() {
   const router =useRouter();
 
   const { mutate: login, isPending: loginPending } = useLogin();
+  const {mutate: googleLogin} = useGoogleOAuth();
 
   const form = useForm({
     defaultValues: {
@@ -54,6 +55,45 @@ export default function LoginForm() {
       });
     },
   });
+
+  const handleGoogleSuccess = (credentialResponse : {credential?: string}) =>{
+    const idToken = credentialResponse.credential;
+
+    if(!idToken){
+      toast.add({
+      title: "Google OAuth Failed",
+      description : "Something went wrong. Please Try Again",
+      type: "error"
+    })
+    return;
+    }
+    googleLogin({idToken},{
+      onSuccess : ()=> {
+        toast.add({
+      title: "Google Logged In Successfully",
+      description : "Welcome Back",
+      type: "success"
+    })
+    router.push("/");
+      },
+
+      onError : (err)=> {
+        toast.add({
+      title: "Google OAuth Failed",
+      description : err.message || "Something went wrong. Please Try Again",
+      type: "error"
+    })
+      }
+    });
+  }
+
+  const handleGoogleError = () => {
+    toast.add({
+      title: "Google OAuth Failed",
+      description : "Something went wrong. Please Try Again",
+      type: "error"
+    })
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -136,13 +176,19 @@ export default function LoginForm() {
 
       {/* google oauth */}
       <div className="relative my-2 text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-        <span className="relative z-10 bg-background px-2 text-muted-foreground">
-          Or
+        <span className="relative z-10 font-bold bg-background px-2 text-muted-foreground">
+          Or Continue With
         </span>
       </div>
 
       <div className="flex justify-center">
-        <GoogleLogin onSuccess={() => {}} onError={() => {}} />
+        <GoogleLogin
+        // theme="outline"
+        theme="filled_black"
+        shape="pill"
+        text="continue_with"
+           onSuccess={handleGoogleSuccess}
+           onError={handleGoogleError} />
       </div>
     </div>
   );

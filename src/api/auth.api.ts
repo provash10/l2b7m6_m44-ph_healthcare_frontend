@@ -18,5 +18,5 @@ export function getMyProfile(){
 }
 
 export function googleOAuth(payload:{idToken : string}){
-    return apiClient("/auth/google",{body: payload});
+    return apiClient("/auth/google",{ method : "POST",body: payload});
 }
