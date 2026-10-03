@@ -11,6 +11,8 @@ import Link from "next/link";
 import GoogleLoginComponent from "../modules/google-login/GoogleLogin";
 import { patientRegistrationSchema } from "@/validation";
 import z from "zod";
+import { useRegistration } from "@/hooks";
+import { toast } from "../ui/toast";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -27,13 +29,53 @@ export function RegisterForm() {
     confirmPassword: "",
   };
 
+  const {mutate : registration} = useRegistration()
+
   const form = useForm({
     defaultValues,
     validators: {
       onSubmit: patientRegistrationSchema,
     },
     onSubmit: async ({ value }) => {
-      console.log(value);
+      // console.log(value);
+      const registrationData ={
+        name : value.name,
+        email: value.email,
+        password: value.password,
+        patient:{
+          contactNumber : value.contactNumber,
+        },
+      };
+
+      registration(registrationData, {
+        onSuccess: (res) => {
+          // console.log(res);
+
+          if(!res.success){
+            toast.add({
+            title: "Server Failure",
+            description:"Something went wrong. Please try again later",
+            type: "error",
+          });
+          }
+
+          toast.add({
+            title: "Registration Success",
+            description: "Please Verify Your Account",
+            type: "success",
+          });
+          const params = new URLSearchParams({ email: registrationData.email });
+          router.push(`/register/verify-account?${params.toString()}`);
+        },
+        onError: (err) => {
+          console.log(err);
+          toast.add({
+            title: "Authentication Failure",
+            description: err.message || "Something went wrong. Please try again later",
+            type: "error",
+          });
+        },
+      });
     },
   });
 

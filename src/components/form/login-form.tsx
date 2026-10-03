@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/toast";
 import { Spinner } from "../ui/spinner";
 import GoogleLoginComponent from "../modules/google-login/GoogleLogin";
+import { URLSearchParams } from "next/dist/compiled/@edge-runtime/primitives/url";
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -41,7 +42,10 @@ export default function LoginForm() {
             description: "Welcome Back",
             type: "success",
           });
+
+    
           router.push("/");
+           
         },
         onError: (err) => {
           console.log(err);
