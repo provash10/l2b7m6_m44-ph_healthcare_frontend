@@ -56,4 +56,11 @@ export const PatientRegistrationZodSchema = patientRegistrationSchema;
 
 //? Either +880, 880, 0
 
+export const verifyAccountSchema = z.object({
+  email: z.string().email("Please enter a valid email"),
+  otp: z.string().min(1, "OTP is required"),
+});
+
+export const VerifyAccountSchema = verifyAccountSchema;
+
 

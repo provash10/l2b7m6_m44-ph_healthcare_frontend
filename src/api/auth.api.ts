@@ -1,5 +1,5 @@
 import apiClient from "@/lib/apiClient";
-import { RegistrationPayload } from "@/types";
+import { RegistrationPayload, VerifyAccountPayload } from "@/types";
 
 export function userLogin(payload : {email:string, password: string}){
     return apiClient("/auth/login",{
@@ -10,6 +10,13 @@ export function userLogin(payload : {email:string, password: string}){
 
 export function userRegistration(payload : RegistrationPayload){
     return apiClient("/auth/register",{
+        method:"POST",
+        body:payload
+    });
+}
+
+export function verifyAccount(payload : VerifyAccountPayload){
+    return apiClient("/auth/verify-account",{
         method:"POST",
         body:payload
     });
@@ -28,3 +35,4 @@ export function getMyProfile(){
 export function googleOAuth(payload:{idToken : string}){
     return apiClient("/auth/google",{ method : "POST",body: payload});
 }
+

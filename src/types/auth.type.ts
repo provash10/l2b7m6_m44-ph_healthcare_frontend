@@ -3,7 +3,12 @@ export interface RegistrationPayload{
         email: string;
         password: string;
         patient:{
-          contactNumber : string;
+          contactNumber?: string;
         },
+}
+
+export interface VerifyAccountPayload {
+  email: string;
+  otp: string;
 }
 
