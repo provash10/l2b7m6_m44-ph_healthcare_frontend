@@ -33,3 +33,11 @@ https://react-oauth.vercel.app/
 46-2
 terminal
 npx server@latest out -p 3000
+
+46-3
+https://ui.shadcn.com/docs/components/base/input-otp
+install
+bunx --bun shadcn@latest add input-otp
+bunx --bun shadcn@latest add card
+
+
