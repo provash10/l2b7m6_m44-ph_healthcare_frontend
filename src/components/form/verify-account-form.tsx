@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -12,20 +12,75 @@ import {
 } from "../ui/card";
 import { Button } from "../ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
-import { Field, FieldLabel } from "../ui/field";
+import { Field, FieldError, FieldLabel } from "../ui/field";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
+import { useVerifyAccount } from "@/hooks";
+import { toast } from "../ui/toast";
 
 export default function VerifyAccountForm() {
   const searchParams = useSearchParams();
-  const [otp, setOtp] = useState("");
-  // console.log(searchParams.get("email"));
+  const router = useRouter();
 
+  const [otp, setOtp] = useState("");
   const email = searchParams.get("email");
+  const [isInvalid, setIsInvalid] = useState(false);
+  const { mutate: verify, isPending: verifyPending } = useVerifyAccount();
+
+  useEffect(() => {
+    if (!email) {
+      router.push("/");
+    }
+  }, [email, router]);
 
   const handleOTP = () => {
-    // console.log("Click");
-    console.log("otp");
+    if (otp.length !== 6) {
+      setIsInvalid(true);
+      return;
+    }
+
+    if (!email) {
+      return;
+    }
+
+    const verifyData = {
+      email,
+      otp,
+    };
+
+    verify(verifyData, {
+      onSuccess: (res) => {
+        if (!res.success) {
+          toast.add({
+            title: "Server Failure",
+            description: "Something went wrong. Please try again later",
+            type: "error",
+          });
+          return;
+        }
+
+        toast.add({
+          title: "Registration Success",
+          description: "Please Verify Your Account",
+          type: "success",
+        });
+
+        router.push("/login");
+      },
+      onError: (err) => {
+        console.log(err);
+        toast.add({
+          title: "Authentication Failure",
+          description:
+            err.message || "Something went wrong. Please try again later",
+          type: "error",
+        });
+      },
+    });
   };
+
+  if (!email) {
+    return null;
+  }
 
   return (
     <Card>
@@ -45,13 +100,18 @@ export default function VerifyAccountForm() {
             handleOTP();
           }}
         >
-          <Field>
+          <Field data-invalid={isInvalid}>
             <FieldLabel htmlFor="otp">OTP</FieldLabel>
             <InputOTP
               id="otp"
               maxLength={6}
               value={otp}
-              onChange={(value) => setOtp(value)}
+              onChange={(value) => {
+                setOtp(value);
+                if (isInvalid) {
+                  setIsInvalid(false);
+                }
+              }}
               autoComplete="off"
               name= "otp"
               pattern={REGEXP_ONLY_DIGITS}
@@ -66,13 +126,16 @@ export default function VerifyAccountForm() {
                 <InputOTPSlot index={5} />
               </InputOTPGroup>
             </InputOTP>
+            {isInvalid && (
+              <FieldError>Invalid Code. Please try again</FieldError>
+            )}
           </Field>
         </form>
       </CardContent>
 
       <CardFooter>
         <Button>Resend</Button>
-        <Button type="submit" form="otp-form">
+        <Button type="submit" form="otp-form" disabled={verifyPending}>
           Submit
         </Button>
       </CardFooter>
