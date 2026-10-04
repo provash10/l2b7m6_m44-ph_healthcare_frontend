@@ -12,25 +12,48 @@ import {
 } from "../ui/card";
 import { Button } from "../ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
-import { Field, FieldError, FieldLabel } from "../ui/field";
+import { Field, FieldDescription, FieldError, FieldLabel } from "../ui/field";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { useVerifyAccount } from "@/hooks";
 import { toast } from "../ui/toast";
+
+const RESEND_COOLDOWN =120
 
 export default function VerifyAccountForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
   const [otp, setOtp] = useState("");
-  const email = searchParams.get("email");
   const [isInvalid, setIsInvalid] = useState(false);
+  // const [resendTimer, setResendTimer] = useState(0);
+    const [resendTimer, setResendTimer] = useState(RESEND_COOLDOWN);
+
+  const email = searchParams.get("email") || "";
   const { mutate: verify, isPending: verifyPending } = useVerifyAccount();
 
   useEffect(() => {
     if (!email) {
       router.push("/");
     }
-  }, [email, router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [email]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (resendTimer > 0) {
+      timer = setInterval(() => {
+        setResendTimer((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    return () => clearInterval(timer);
+  }, [resendTimer]);
 
   const handleOTP = () => {
     if (otp.length !== 6) {
@@ -59,19 +82,21 @@ export default function VerifyAccountForm() {
         }
 
         toast.add({
-          title: "Registration Success",
-          description: "Please Verify Your Account",
+          title: "Verification Successfull",
+          description: "Welcome on board",
           type: "success",
         });
 
         router.push("/login");
       },
-      onError: (err) => {
-        console.log(err);
+      onError: (err: any) => {
+        console.log("Verification error:", err);
         toast.add({
-          title: "Authentication Failure",
+          title: "Verification Failure",
           description:
-            err.message || "Something went wrong. Please try again later",
+            err?.data?.message ||
+            err?.message ||
+            "Something went wrong. Please try again later",
           type: "error",
         });
       },
@@ -129,12 +154,24 @@ export default function VerifyAccountForm() {
             {isInvalid && (
               <FieldError>Invalid Code. Please try again</FieldError>
             )}
+
+            <FieldDescription>
+              Resend in {resendTimer}
+            </FieldDescription>
           </Field>
         </form>
       </CardContent>
 
       <CardFooter>
-        <Button>Resend</Button>
+        <Button
+          type="button"
+          disabled={resendTimer > 0}
+          onClick={() => {
+            setResendTimer(60);
+          }}
+        >
+          {resendTimer > 0 ? `Resend in ${resendTimer}s` : "Resend"}
+        </Button>
         <Button type="submit" form="otp-form" disabled={verifyPending}>
           Submit
         </Button>
