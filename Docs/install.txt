@@ -29,3 +29,7 @@ npm i @react-oauth/google
 Demo & How to use to fetch user details
 https://react-oauth.vercel.app/
 
+
+46-2
+terminal
+npx server@latest out -p 3000

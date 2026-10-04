@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 
 
-export default function VerifyAccount(){
+export default function VerifyAccountForm(){
 
     const searchParams = useSearchParams();
     // console.log(searchParams.get("email"));
