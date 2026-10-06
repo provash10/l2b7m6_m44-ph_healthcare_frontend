@@ -73,6 +73,7 @@ export default function DoctorApplyForm() {
       consultationFee: "",
       bio: "",
       resume: null as File | null,
+      additionalFiles: [] as File[],
     },
     onSubmit: async ({ value }) => {
       console.log(value);
@@ -411,8 +412,8 @@ export default function DoctorApplyForm() {
               const isInvalid =
                 field.state.meta.isTouched && !field.state.meta.isValid;
 
-                //
-                const file = field.state.value;
+              //
+              const file = field.state.value;
 
               return (
                 <Field data-invalid={isInvalid}>
@@ -465,6 +466,83 @@ export default function DoctorApplyForm() {
                         {MAX_FILE_SIZE}MB
                       </span>
                     )}
+                  </div>
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </Field>
+              );
+            }}
+          </form.Field>
+
+          {/* aditional files */}
+          <form.Field name="additionalFiles">
+            {(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+
+              //
+              const files = field.state.value;
+
+              return (
+                <Field data-invalid={isInvalid}>
+                  <FieldLabel htmlFor="additional-file-field">
+                    Resume
+                  </FieldLabel>
+                  <div className="flex items-center gap-3">
+                    <Button
+                      render={<label htmlFor="additional-file-field" />}
+                      nativeButton={false}
+                      variant="outline"
+                      className="cursor-pointer"
+                    >
+                      <FileUp size="4" />
+                      Upload Additional files
+                    </Button>
+
+                    <input
+                      id="additional-file-field"
+                      type="file"
+                      multiple
+                      className="sr-only"
+                      name={field.name}
+                      onChange={(e) => {
+                        const incoming = Array.from(e.target.files ?? []);
+                        console.log([...files, ...incoming]);
+
+                        field.handleChange([...files, ...incoming])
+
+                        if(incoming.length === 0){
+                            return;
+                        }
+
+                        const invalid = incoming.some(
+                            (file) => !isAcceptedFileSize(file.size) ||
+                                      !isAcceptedFileType(file.type)
+                        )
+
+                        if(invalid){
+                            field.handleBlur();
+                            e.target.value = "";
+                            return;
+                        }
+        
+                      }}
+                    />
+                    {/* {file ? (
+                      <div className="inline-flex">
+                        <span>{file.name}</span>
+                        <button
+                          type="button"
+                          onClick={() => field.handleChange(null)}
+                        >
+                          <X />
+                        </button>
+                      </div>
+                    ) : (
+                      <span>
+                        Supported File: .pdf, .doc, .dox, .png, .jpg and size{" "}
+                        {MAX_FILE_SIZE}MB
+                      </span>
+                    )} */}
                   </div>
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
