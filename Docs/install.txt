@@ -40,4 +40,15 @@ install
 bunx --bun shadcn@latest add input-otp
 bunx --bun shadcn@latest add card
 
+46-8
+standard mime types 
+MIME types (Multipurpose Internet Mail Extensions), officially called Media types
+---png,jpg etc 
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/MIME_types/Common_types
+search ---> .pdf 
+.doc	Microsoft Word	application/msword
+.docx	Microsoft Word (OpenXML)	application/vnd.openxmlformats-officedocument.wordprocessingml.document
+
+
+
 

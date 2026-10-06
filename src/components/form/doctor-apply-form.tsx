@@ -14,6 +14,7 @@ import {
   Briefcase,
   CreditCard,
   FileUp,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,8 +27,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  MAX_FILE_SIZE,
   MAX_FILE_SIZE_BYTES,
   isAcceptedFileSize,
+  isAcceptedFileType,
 } from "@/validation/doctor.application.validation";
 
 // * Data signature
@@ -407,6 +410,10 @@ export default function DoctorApplyForm() {
             {(field) => {
               const isInvalid =
                 field.state.meta.isTouched && !field.state.meta.isValid;
+
+                //
+                const file = field.state.value;
+
               return (
                 <Field data-invalid={isInvalid}>
                   <FieldLabel htmlFor="resume-field">Resume</FieldLabel>
@@ -420,12 +427,7 @@ export default function DoctorApplyForm() {
                       <FileUp size="4" />
                       Upload resume
                     </Button>
-                    {field.state.value && (
-                      <span className="text-sm text-muted-foreground truncate max-w-xs">
-                        {(field.state.value as File).name} (
-                        {formatFileSize((field.state.value as File).size)})
-                      </span>
-                    )}
+
                     <input
                       id="resume-field"
                       type="file"
@@ -434,24 +436,35 @@ export default function DoctorApplyForm() {
                       onChange={(e) => {
                         const selected = e.target.files?.[0] ?? null;
 
-                        if (!selected) {
-                          field.handleChange(null);
+                        if (
+                          selected &&
+                          (!isAcceptedFileSize(selected.size) ||
+                            !isAcceptedFileType(selected?.type))
+                        ) {
                           field.handleBlur();
-                          return;
-                        }
-
-                        if (!isAcceptedFileSize(selected.size)) {
-                          field.handleChange(null);
-                          field.handleBlur();
-                          e.target.value = "";
                           return;
                         }
 
                         field.handleChange(selected);
-                        console.log("Selected file:", selected.name);
-                        console.log("Size:", formatFileSize(selected.size));
+                        e.target.value = "";
                       }}
                     />
+                    {file ? (
+                      <div className="inline-flex">
+                        <span>{file.name}</span>
+                        <button
+                          type="button"
+                          onClick={() => field.handleChange(null)}
+                        >
+                          <X />
+                        </button>
+                      </div>
+                    ) : (
+                      <span>
+                        Supported File: .pdf, .doc, .dox, .png, .jpg and size{" "}
+                        {MAX_FILE_SIZE}MB
+                      </span>
+                    )}
                   </div>
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
