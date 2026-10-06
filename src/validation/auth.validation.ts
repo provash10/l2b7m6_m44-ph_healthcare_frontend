@@ -63,4 +63,24 @@ export const verifyAccountSchema = z.object({
 
 export const VerifyAccountSchema = verifyAccountSchema;
 
+export const doctorApplySchema = z.object({
+  name: z.string().min(2, "Full name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email"),
+  contactNumber: z.string().min(1, "Contact number is required"),
+  address: z.string().optional(),
+  specialization: z.string().min(1, "Specialization is required"),
+  licenseNumber: z.string().min(1, "BMDC registration number is required"),
+  qualifications: z.string().min(1, "Qualifications are required"),
+  experienceYears: z
+    .union([z.string(), z.number()])
+    .refine((val) => val !== "" && !isNaN(Number(val)), {
+      message: "Years of experience is required",
+    }),
+  consultationFee: z.union([z.string(), z.number()]).optional(),
+  bio: z.string().max(1000, "Bio cannot exceed 1000 characters").optional(),
+  resume: z.any().optional(),
+});
+
+export const DoctorApplyZodSchema = doctorApplySchema;
+
 
