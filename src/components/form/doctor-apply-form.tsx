@@ -25,8 +25,18 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  MAX_FILE_SIZE_BYTES,
+  isAcceptedFileSize,
+} from "@/validation/doctor.application.validation";
 
 // * Data signature
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 // {
 //   "user": {
 //     "name": "Dr. Sarah Jenkins",
@@ -62,26 +72,10 @@ export default function DoctorApplyForm() {
       resume: null as File | null,
     },
     onSubmit: async ({ value }) => {
-      const doctorData = {
-        user: {
-          name: value.name,
-          email: value.email,
-        },
-        doctor: {
-          address: value.address || undefined,
-          specialization: value.specialization,
-          licenseNumber: value.licenseNumber,
-          qualifications: value.qualifications,
-          experienceYears: Number(value.experienceYears),
-          bio: value.bio || undefined,
-          consultationFee: value.consultationFee
-            ? Number(value.consultationFee)
-            : undefined,
-          contactNumber: value.phone,
-        },
-      };
-
-      console.log(doctorData);
+      console.log(value);
+      if (value.resume) {
+        console.log("Resume size:", formatFileSize(value.resume.size));
+      }
     },
   });
 
@@ -416,23 +410,47 @@ export default function DoctorApplyForm() {
               return (
                 <Field data-invalid={isInvalid}>
                   <FieldLabel htmlFor="resume-field">Resume</FieldLabel>
-                  <div>
+                  <div className="flex items-center gap-3">
                     <Button
                       render={<label htmlFor="resume-field" />}
                       nativeButton={false}
                       variant="outline"
+                      className="cursor-pointer"
                     >
                       <FileUp size="4" />
                       Upload resume
                     </Button>
+                    {field.state.value && (
+                      <span className="text-sm text-muted-foreground truncate max-w-xs">
+                        {(field.state.value as File).name} (
+                        {formatFileSize((field.state.value as File).size)})
+                      </span>
+                    )}
                     <input
                       id="resume-field"
                       type="file"
                       className="sr-only"
                       name={field.name}
-                      onChange={(e) =>
-                        field.handleChange(e.target.files?.[0] || null)
-                      }
+                      onChange={(e) => {
+                        const selected = e.target.files?.[0] ?? null;
+
+                        if (!selected) {
+                          field.handleChange(null);
+                          field.handleBlur();
+                          return;
+                        }
+
+                        if (!isAcceptedFileSize(selected.size)) {
+                          field.handleChange(null);
+                          field.handleBlur();
+                          e.target.value = "";
+                          return;
+                        }
+
+                        field.handleChange(selected);
+                        console.log("Selected file:", selected.name);
+                        console.log("Size:", formatFileSize(selected.size));
+                      }}
                     />
                   </div>
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
