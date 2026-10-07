@@ -34,6 +34,7 @@ import {
   MAX_FILE_SIZE_BYTES,
   isAcceptedFileSize,
   isAcceptedFileType,
+  doctorApplicationSchema,
 } from "@/validation/doctor.application.validation";
 import { useApplyAsDoctor } from "@/hooks/doctor.hooks";
 import { DoctorApplicationData } from "@/types";
@@ -80,6 +81,9 @@ export default function DoctorApplyForm() {
       bio: "",
       resume: null as File | null,
       additionalFiles: [] as File[],
+    },
+    validators: {
+      onSubmit: doctorApplicationSchema,
     },
     onSubmit: async ({ value }) => {
       // Doctor data payload matching DoctorApplicationData interface
@@ -158,7 +162,7 @@ export default function DoctorApplyForm() {
             <form.Field name="name">
               {(field) => {
                 const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
+                  (field.state.meta.isTouched || form.state.isSubmitted) && !field.state.meta.isValid;
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>Full name</FieldLabel>
@@ -186,7 +190,7 @@ export default function DoctorApplyForm() {
             <form.Field name="email">
               {(field) => {
                 const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
+                  (field.state.meta.isTouched || form.state.isSubmitted) && !field.state.meta.isValid;
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>Email address</FieldLabel>
@@ -215,7 +219,7 @@ export default function DoctorApplyForm() {
             <form.Field name="phone">
               {(field) => {
                 const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
+                  (field.state.meta.isTouched || form.state.isSubmitted) && !field.state.meta.isValid;
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>Contact number</FieldLabel>
@@ -243,7 +247,7 @@ export default function DoctorApplyForm() {
             <form.Field name="address">
               {(field) => {
                 const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
+                  (field.state.meta.isTouched || form.state.isSubmitted) && !field.state.meta.isValid;
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>
@@ -276,7 +280,7 @@ export default function DoctorApplyForm() {
             <form.Field name="specialization">
               {(field) => {
                 const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
+                  (field.state.meta.isTouched || form.state.isSubmitted) && !field.state.meta.isValid;
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>Specialization</FieldLabel>
@@ -304,7 +308,7 @@ export default function DoctorApplyForm() {
             <form.Field name="licenseNumber">
               {(field) => {
                 const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
+                  (field.state.meta.isTouched || form.state.isSubmitted) && !field.state.meta.isValid;
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>
@@ -334,7 +338,7 @@ export default function DoctorApplyForm() {
             <form.Field name="qualifications">
               {(field) => {
                 const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
+                  (field.state.meta.isTouched || form.state.isSubmitted) && !field.state.meta.isValid;
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>Qualifications</FieldLabel>
@@ -362,7 +366,7 @@ export default function DoctorApplyForm() {
             <form.Field name="experienceYears">
               {(field) => {
                 const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
+                  (field.state.meta.isTouched || form.state.isSubmitted) && !field.state.meta.isValid;
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>
@@ -393,7 +397,7 @@ export default function DoctorApplyForm() {
             <form.Field name="consultationFee">
               {(field) => {
                 const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
+                  (field.state.meta.isTouched || form.state.isSubmitted) && !field.state.meta.isValid;
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>
@@ -428,7 +432,7 @@ export default function DoctorApplyForm() {
           <form.Field name="bio">
             {(field) => {
               const isInvalid =
-                field.state.meta.isTouched && !field.state.meta.isValid;
+                (field.state.meta.isTouched || form.state.isSubmitted) && !field.state.meta.isValid;
               return (
                 <Field data-invalid={isInvalid}>
                   <FieldLabel htmlFor={field.name}>
@@ -463,7 +467,7 @@ export default function DoctorApplyForm() {
           <form.Field name="resume">
             {(field) => {
               const isInvalid =
-                field.state.meta.isTouched && !field.state.meta.isValid;
+                (field.state.meta.isTouched || form.state.isSubmitted) && !field.state.meta.isValid;
 
               //
               const file = field.state.value;
@@ -538,14 +542,17 @@ export default function DoctorApplyForm() {
           <form.Field name="additionalFiles">
             {(field) => {
               const isInvalid =
-                field.state.meta.isTouched && !field.state.meta.isValid;
+                (field.state.meta.isTouched || form.state.isSubmitted) && !field.state.meta.isValid;
 
               const files = field.state.value ?? [];
 
               return (
                 <Field data-invalid={isInvalid}>
                   <FieldLabel htmlFor="additional-file-field">
-                    Resume
+                    Additional Files
+                    <span className="font-normal text-muted-foreground">
+                      (Optional)
+                    </span>
                   </FieldLabel>
                   <div className="flex flex-col gap-3">
                     <div className="flex items-center gap-3">
