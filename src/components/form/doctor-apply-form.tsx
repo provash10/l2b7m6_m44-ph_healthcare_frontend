@@ -32,6 +32,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   MAX_FILE_SIZE,
   MAX_FILE_SIZE_BYTES,
+  MAX_ADDITIONAL_FILES,
   isAcceptedFileSize,
   isAcceptedFileType,
   doctorApplicationSchema,
@@ -494,15 +495,15 @@ export default function DoctorApplyForm() {
                       onChange={(e) => {
                         const selected = e.target.files?.[0] ?? null;
 
-                        if (
-                          selected &&
-                          (!isAcceptedFileSize(selected.size) ||
-                            !isAcceptedFileType(selected?.type))
-                        ) {
-                          field.handleBlur();
-                          e.target.value = "";
-                          return;
-                        }
+                        // if (
+                        //   selected &&
+                        //   (!isAcceptedFileSize(selected.size) ||
+                        //     !isAcceptedFileType(selected?.type))
+                        // ) {
+                        //   field.handleBlur();
+                        //   e.target.value = "";
+                        //   return;
+                        // }
 
                         field.handleChange(selected);
                         e.target.value = "";
@@ -561,14 +562,14 @@ export default function DoctorApplyForm() {
                         nativeButton={false}
                         variant="outline"
                         className="cursor-pointer"
-                        disabled={files.length >= 5}
+                        disabled={files.length >= MAX_ADDITIONAL_FILES}
                       >
                         <Plus size="4" />
                         Add Files
                       </Button>
 
                       <span className="text-sm text-muted-foreground">
-                        {files.length} of 5 added
+                        {files.length} of {MAX_ADDITIONAL_FILES} added
                       </span>
 
                       <input
@@ -577,26 +578,27 @@ export default function DoctorApplyForm() {
                         multiple
                         className="sr-only"
                         name={field.name}
-                        disabled={files.length >= 5}
+                        disabled={files.length >= MAX_ADDITIONAL_FILES}
                         onChange={(e) => {
                           const incoming = Array.from(e.target.files ?? []);
-                          if (incoming.length === 0) return;
 
-                          const invalid = incoming.some(
-                            (file) =>
-                              !isAcceptedFileSize(file.size) ||
-                              !isAcceptedFileType(file.type)
-                          );
-
-                          if (invalid) {
-                            field.handleBlur();
-                            e.target.value = "";
+                          if (incoming.length === 0) {
                             return;
                           }
 
-                          // Maximum 5 files
-                          const combined = [...files, ...incoming].slice(0, 5);
-                          field.handleChange(combined);
+                          // const invalid = incoming.some(
+                          //   (file) =>
+                          //     !isAcceptedFileSize(file.size) ||
+                          //     !isAcceptedFileType(file.type),
+                          // );
+
+                          // if (invalid) {
+                          //   field.handleBlur();
+                          //   e.target.value = "";
+                          //   return;
+                          // }
+
+                          field.handleChange([...files, ...incoming]);
                           e.target.value = "";
                         }}
                       />

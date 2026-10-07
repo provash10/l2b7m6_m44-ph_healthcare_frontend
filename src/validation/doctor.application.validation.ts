@@ -73,14 +73,20 @@ export const doctorApplicationSchema = z.object({
     message: "A resume of cv is required",
   }),
   additionalFiles: z
-    .array(
-      getCustomFileSchema<File>(
-        `File must be a PDF, DOC, DOCX or an image file under ${MAX_FILE_SIZE}MB`,
-      ),
-    )
+    .array(z.custom<File>((value) => value instanceof File))
     .max(
       MAX_ADDITIONAL_FILES,
       `You can attach at most ${MAX_ADDITIONAL_FILES} supporting documents`,
+    )
+    .refine(
+      (files) =>
+        files.every(
+          (file) =>
+            isAcceptedFileSize(file.size) && isAcceptedFileType(file.type),
+        ),
+      {
+        message: `Each file must be a PDF, DOC, DOCX or an image file under ${MAX_FILE_SIZE}MB`,
+      },
     ),
 });
 
