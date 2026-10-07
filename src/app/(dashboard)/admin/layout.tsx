@@ -1,9 +1,5 @@
 import { ReactNode } from "react";
 
-export default function AdminLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
-  return <>{children}</>;
+export default function layout({ children }: { children: ReactNode }) {
+  return <div>Admin Layout {children}</div>;
 }

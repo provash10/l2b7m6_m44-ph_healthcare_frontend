@@ -38,3 +38,5 @@ export function useGetMyProfile(){
         retry: false,
     })
 }
+
+export const useGetMe = useGetMyProfile;
