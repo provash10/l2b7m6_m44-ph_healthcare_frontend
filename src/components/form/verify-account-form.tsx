@@ -14,22 +14,30 @@ import { Button } from "../ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
 import { Field, FieldDescription, FieldError, FieldLabel } from "../ui/field";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
-import { useVerifyAccount } from "@/hooks";
+import { useVerifyAccount, useVerifyDoctorAccount } from "@/hooks";
 import { toast } from "../ui/toast";
 
-const RESEND_COOLDOWN =120
+const RESEND_COOLDOWN = 120;
 
-export default function VerifyAccountForm() {
+export default function VerifyAccountForm({
+  mode = "patient",
+}: {
+  mode?: "doctor" | "patient";
+}) {
   const searchParams = useSearchParams();
   const router = useRouter();
 
   const [otp, setOtp] = useState("");
   const [isInvalid, setIsInvalid] = useState(false);
-  // const [resendTimer, setResendTimer] = useState(0);
-    const [resendTimer, setResendTimer] = useState(RESEND_COOLDOWN);
+  const [resendTimer, setResendTimer] = useState(RESEND_COOLDOWN);
+
+  const { mutate: verifyPatient, isPending: isPatientPending } = useVerifyAccount();
+  const { mutate: verifyDoctor, isPending: isDoctorPending } = useVerifyDoctorAccount();
+
+  const verify = mode === "doctor" ? verifyDoctor : verifyPatient;
+  const verifyPending = mode === "doctor" ? isDoctorPending : isPatientPending;
 
   const email = searchParams.get("email") || "";
-  const { mutate: verify, isPending: verifyPending } = useVerifyAccount();
 
   useEffect(() => {
     if (!email) {
@@ -39,18 +47,13 @@ export default function VerifyAccountForm() {
   }, [email]);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (resendTimer > 0) {
-      timer = setInterval(() => {
-        setResendTimer((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+    if (resendTimer <= 0) {
+      return;
     }
+
+    const timer = setInterval(() => {
+      setResendTimer((prev) => prev - 1);
+    }, 1000);
 
     return () => clearInterval(timer);
   }, [resendTimer]);
@@ -81,13 +84,24 @@ export default function VerifyAccountForm() {
           return;
         }
 
+        if (mode === "doctor") {
+          toast.add({
+            title: "Verification Successful",
+            description:
+              "An admin will approve your account. This may take time. Please check your email in few days",
+            type: "success",
+          });
+          router.push("/");
+
+          return;
+        }
+
         toast.add({
-          title: "Verification Successfull",
-          description: "Welcome on board",
+          title: "Verification Successful",
+          description: "Welcome onboard",
           type: "success",
         });
-
-        router.push("/login");
+        router.push("/");
       },
       onError: (err: any) => {
         console.log("Verification error:", err);

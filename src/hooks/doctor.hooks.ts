@@ -1,4 +1,4 @@
-import { applyAsdoctor } from "@/api";
+import { applyAsdoctor, verifyAccount } from "@/api";
 import { useMutation } from "@tanstack/react-query";
 
 export function useApplyAsDoctor(){
@@ -6,3 +6,9 @@ export function useApplyAsDoctor(){
         mutationFn: applyAsdoctor
     })
 }
+
+export function useVerifyDoctorAccount(){
+    return useMutation({
+        mutationFn: verifyAccount
+    })
+}

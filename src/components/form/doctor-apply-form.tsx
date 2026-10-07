@@ -119,6 +119,8 @@ export default function DoctorApplyForm() {
               description: res?.message || "Applied As Doctor Successfully",
               type: "success",
             });
+            const params = new URLSearchParams({ email: value.email.trim() });
+            router.push(`/apply/verify-account?${params.toString()}`);
           },
           onError: (err: any) => {
             console.log(err);
