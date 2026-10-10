@@ -2,9 +2,12 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DoctorApprovalTable from "./doctor-approval-table";
+import { Suspense } from "react";
+import DoctorApprovalTableLoading from "./doctor-approval-table-loading";
 
 export default function DoctorApprovalTabs() {
   return (
+    <>
     <Tabs defaultValue="pending">
       <TabsList>
         <TabsTrigger value="pending">Pending</TabsTrigger>
@@ -12,22 +15,16 @@ export default function DoctorApprovalTabs() {
         <TabsTrigger value="rejected">Rejected</TabsTrigger>
         <TabsTrigger value="all">All</TabsTrigger>
       </TabsList>
-      <TabsContent value="pending">
-        {/* Pending Table */}
-        <DoctorApprovalTable/>
-        </TabsContent>
-      <TabsContent value="approved">
-        {/* Approved Table */}
-        <DoctorApprovalTable/>
-        </TabsContent>
-      <TabsContent value="rejected">
-        {/* Rejected Table */}
-        <DoctorApprovalTable/>
-        </TabsContent>
-      <TabsContent value="all">
-        {/* All Table */}
-        <DoctorApprovalTable/>
-        </TabsContent>
     </Tabs>
+
+    {/* <Suspense fallback={<p>Loading...</p>}>
+      <DoctorApprovalTable/>
+    </Suspense> */}
+
+    <Suspense fallback={<DoctorApprovalTableLoading/>}>
+      <DoctorApprovalTable/>
+    </Suspense>
+
+    </>
   );
 }

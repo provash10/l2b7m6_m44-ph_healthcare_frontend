@@ -6,20 +6,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import DoctorReviewSheet from "./doctor-review-sheet";
-import { useGetAllDoctors } from "@/hooks";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default function DoctorApprovalTable() {
-  const { data} = useGetAllDoctors();
-  console.log(data);
-
-  const doctors = data?.data || [];
-  console.log(doctors);
-
-  // if (isPending) {
-  //   return <p>Loading...</p>;
-  // }
-
+export default function DoctorApprovalTableLoading() {
   return (
     <div className="border rounded-lg">
       <Table>
@@ -34,17 +23,19 @@ export default function DoctorApprovalTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {doctors.map((doctor: any) => (
-            <TableRow key={doctor.id || doctor._id || doctor.email}>
+          {[1, 2, 3].map((doctor) => (
+            <TableRow key={doctor}>
+              <TableCell colSpan={6}>
+                <Skeleton className="h-5 w-20" />
+              </TableCell>
               {/* <TableCell className="font-medium">Mir Hussain</TableCell> */}
-              <TableCell className="font-medium">{doctor.name}</TableCell>
-              <TableCell className="font-medium">{doctor.licenseNumber}</TableCell>
+              {/* <TableCell className="font-medium">{doctor.licenseNumber}</TableCell>
               <TableCell className="font-medium">{doctor.email}</TableCell>
-              <TableCell className="font-medium">{doctor.contactNumber ?doctor.contactNumber : "-"}</TableCell>
+              <TableCell className="font-medium">{doctor.contactNumber ? doctor.contactNumber : "-"}</TableCell>
               <TableCell className="font-medium">{doctor.specialization}</TableCell>
               <TableCell className="text-right">
                 <DoctorReviewSheet />
-              </TableCell>
+              </TableCell> */}
             </TableRow>
           ))}
         </TableBody>
