@@ -18,12 +18,12 @@ export function applyAsDoctor(payload: DoctorApplicationPayload) {
 }
 
 export function verifyDoctorAccount(payload: VerifyAccountPayload) {
-  return apiClient("/doctor/apply-as-doctor/verify-email", {
+  return apiClient<ApiResponse<Doctor[]>>("/doctor/apply-as-doctor/verify-email", {
     method: "POST",
     body: payload,
   });
 }
 
 export function getAllDoctors() {
-  return apiClient("/doctor/all-doctors");
+  return apiClient<Doctor[]>("/doctor/all-doctors");
 }
