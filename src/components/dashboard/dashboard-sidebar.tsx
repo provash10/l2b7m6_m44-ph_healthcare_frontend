@@ -1,4 +1,4 @@
-import * as React from "react"
+"use client";
 
 import {
   Sidebar,
@@ -11,33 +11,48 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar"
-import Logo from "@/assets/svg/logo"
+} from "@/components/ui/sidebar";
+import Logo from "@/assets/svg/logo";
+import { UserRole } from "@/types";
+import { adminRoutes, doctorRoutes, patientRoutes } from "@/routes";
+import { SidebarItems } from "@/types/sidebar.type";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-// This is sample data.
-const data = {
-//   versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
- 
-}
+const sidebarRoutes: Partial<Record<UserRole, SidebarItems>> = {
+  SUPER_ADMIN: adminRoutes,
+  ADMIN: adminRoutes,
+  DOCTOR: doctorRoutes,
+  PATIENT: patientRoutes,
+};
 
-export function DashboardSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function DashboardSidebar({ role }: { role: UserRole }) {
+  const pathname = usePathname();
+  const routes: SidebarItems = sidebarRoutes[role] || [];
+
+  console.log(pathname);
+
   return (
-    <Sidebar {...props}>
-      <SidebarHeader className="flex flex-row items-center gap-2 p-4">
-        <Logo />
-        <span className="font-semibold text-base">PH Healthcare</span>
+    <Sidebar>
+      <SidebarHeader>
+        <div className="flex items-center gap-2">
+          <Logo />
+          <span>PH Healthcare</span>
+        </div>
       </SidebarHeader>
       <SidebarContent>
-        {/* We create a SidebarGroup for each parent. */}
-        {data.navMain.map((item) => (
+        {routes.map((item) => (
           <SidebarGroup key={item.title}>
             <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {item.items.map((item) => (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={item.isActive}>
-                      <a href={item.url}>{item.title}</a>
+                    <SidebarMenuButton
+                      render={<Link href={item.url} />}
+                      isActive={pathname === item.url}
+                    >
+                      {item.title}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
@@ -48,7 +63,7 @@ export function DashboardSidebar({ ...props }: React.ComponentProps<typeof Sideb
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }
 
 export const AppSidebar = DashboardSidebar;

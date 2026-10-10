@@ -10,7 +10,7 @@ import { ReactNode } from "react";
 export default function layout({ children }: { children: ReactNode }) {
   return <RoleGuard roles={["ADMIN", "SUPER_ADMIN"]}>
     {/* Admin Layout  */}
-    <DashboardShell>
+    <DashboardShell role ="ADMIN">
       {children}
     </DashboardShell>
     </RoleGuard>;
