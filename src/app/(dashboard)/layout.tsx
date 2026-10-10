@@ -4,7 +4,9 @@ import { ReactNode } from "react";
 export default function layout({ children }: { children: ReactNode }) {
   return (
     <AuthGuard>
-      General Dashboard Layout {children}
+      {/* General Dashboard Layout {children} */}
+      
+      {children}
     </AuthGuard>
   );
 }

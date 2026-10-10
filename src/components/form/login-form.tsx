@@ -12,11 +12,12 @@ import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/toast";
 import { Spinner } from "../ui/spinner";
 import GoogleLoginComponent from "../modules/google-login/GoogleLogin";
-import { URLSearchParams } from "next/dist/compiled/@edge-runtime/primitives/url";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { mutate: login, isPending: loginPending } = useLogin();
 
@@ -43,9 +44,8 @@ export default function LoginForm() {
             type: "success",
           });
 
-    
+          queryClient.invalidateQueries({ queryKey: ["user"] });
           router.push("/");
-           
         },
         onError: (err) => {
           console.log(err);
