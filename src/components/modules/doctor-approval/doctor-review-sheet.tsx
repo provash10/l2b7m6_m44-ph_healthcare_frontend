@@ -11,8 +11,8 @@ import {
 export default function DoctorReviewSheet() {
   return (
     <Sheet>
-      <SheetTrigger>
-        <Button variant="outline">Review</Button>
+      <SheetTrigger render={<Button variant="outline" />}>
+        Review
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
