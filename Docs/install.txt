@@ -59,3 +59,9 @@ bunx --bun shadcn@latest add sidebar
 47-7 Understanding and creating sidebar routes
 47-7
 src- routes
+
+
+47-9 
+doctor approval --shadcn
+tabs, table, pagination, sheet
+bunx --bun shadcn@latest add sheet tabs, table, pagination
