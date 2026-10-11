@@ -22,7 +22,8 @@ export default function DoctorApprovalTabs() {
   const queryParams: DoctorParams = {
     page: 1,
     limit: 10,
-    verificationStatus: tab === "ALL" ? undefined : tab,
+    // verificationStatus: tab === "ALL" ? undefined : tab,
+    ...(tab === "ALL" ? {} : {verificationStatus : tab})
   };
 
   return (
