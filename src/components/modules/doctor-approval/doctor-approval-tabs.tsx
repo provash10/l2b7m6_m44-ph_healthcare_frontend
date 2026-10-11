@@ -52,7 +52,7 @@ export default function DoctorApprovalTabs() {
     </Suspense> */}
 
     <Suspense fallback={<DoctorApprovalTableLoading/>}>
-      <DoctorApprovalTable/>
+      <DoctorApprovalTable verificationStatus={tab}/>
     </Suspense>
 
     </>

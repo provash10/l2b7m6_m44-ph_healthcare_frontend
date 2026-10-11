@@ -51,3 +51,8 @@ export interface Doctor {
   userId: string;
   user: User;
 }
+
+
+export interface DoctorParams {
+  verificationStatus?: DoctorVerificationStatus | "All";
+}

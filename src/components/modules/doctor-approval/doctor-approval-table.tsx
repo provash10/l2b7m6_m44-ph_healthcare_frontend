@@ -7,18 +7,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import DoctorReviewSheet from "./doctor-review-sheet";
-import { useGetAllDoctors } from "@/hooks";
+import { useSuspenseGetAllDoctors } from "@/hooks";
+import { DoctorVerificationStatus } from "@/types";
 
-export default function DoctorApprovalTable() {
-  const { data} = useGetAllDoctors();
-  console.log(data);
+interface Props {
+  verificationStatus?:DoctorVerificationStatus;
+}
+
+export default function DoctorApprovalTable({verificationStatus} : Props) {
+  // const { data } = useSuspenseGetAllDoctors({ verificationStatus: "PENDING" });
+  const { data } = useSuspenseGetAllDoctors({});
 
   const doctors = data?.data || [];
-  console.log(doctors);
-
-  // if (isPending) {
-  //   return <p>Loading...</p>;
-  // }
 
   return (
     <div className="border rounded-lg">
