@@ -8,15 +8,16 @@ import {
 } from "@/components/ui/table";
 import DoctorReviewSheet from "./doctor-review-sheet";
 import { useSuspenseGetAllDoctors } from "@/hooks";
-import { DoctorVerificationStatus } from "@/types";
+import { DoctorParams, DoctorVerificationStatus } from "@/types";
 
-interface Props {
-  verificationStatus?:DoctorVerificationStatus;
-}
+// interface Props {
+//   verificationStatus?:DoctorVerificationStatus;
+// }
 
-export default function DoctorApprovalTable({verificationStatus} : Props) {
-  // const { data } = useSuspenseGetAllDoctors({ verificationStatus: "PENDING" });
-  const { data } = useSuspenseGetAllDoctors({});
+interface Props extends DoctorParams {}
+
+export default function DoctorApprovalTable(params: Props) {
+  const { data } = useSuspenseGetAllDoctors(params);
 
   const doctors = data?.data || [];
 

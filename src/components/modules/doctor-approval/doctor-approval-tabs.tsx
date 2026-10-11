@@ -4,21 +4,26 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DoctorApprovalTable from "./doctor-approval-table";
 import { Suspense, useState } from "react";
 import DoctorApprovalTableLoading from "./doctor-approval-table-loading";
-import { DoctorVerificationStatus } from "@/types/doctor.type";
+import type { DoctorParams, DoctorVerificationStatus } from "@/types";
 import { Input } from "@/components/ui/input";
 
-const verificationStatus: ["All" | DoctorVerificationStatus, string][] = [
-//  tuple
+const verificationStatus: ["ALL" | DoctorVerificationStatus, string][] = [
+  // tuple
   ["APPROVED", "Approved"],
   ["PENDING", "Pending"],
   ["REJECTED", "Rejected"],
-  ["All", "All"],
+  ["ALL", "All"],
 ];
 
 export default function DoctorApprovalTabs() {
-  const [tab, settab] = useState("All");
-
+  const [tab, settab] = useState<"ALL" | DoctorVerificationStatus>("ALL");
   console.log(tab);
+
+  const queryParams: DoctorParams = {
+    page: 1,
+    limit: 10,
+    verificationStatus: tab === "ALL" ? undefined : tab,
+  };
 
   return (
     <>
@@ -26,7 +31,7 @@ export default function DoctorApprovalTabs() {
       <div>
         <Input type="search" placeholder="Search By Name or Email"/>
       </div>
-      <Tabs value={tab} onValueChange={(value) => settab(value)}>
+      <Tabs value={tab} onValueChange={(value) => settab(value as "ALL" | DoctorVerificationStatus)}>
       <TabsList>
         {/* {verificationStatus.map((status)=>
         <TabsTrigger value={status}>{status}</TabsTrigger>
@@ -52,7 +57,13 @@ export default function DoctorApprovalTabs() {
     </Suspense> */}
 
     <Suspense fallback={<DoctorApprovalTableLoading/>}>
-      <DoctorApprovalTable verificationStatus={tab}/>
+      <DoctorApprovalTable  {...queryParams}/>
+     
+      {/* // verificationStatus={tab} 
+      // page={1} 
+      // limit={10}
+      // searchTerm={"asdef"} */}
+
     </Suspense>
 
     </>
