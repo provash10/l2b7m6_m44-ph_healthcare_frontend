@@ -6,17 +6,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import DoctorReviewSheet from "./doctor-review-sheet";
 import { useSuspenseGetAllDoctors } from "@/hooks";
-import { DoctorParams, DoctorVerificationStatus } from "@/types";
+import { DoctorParams } from "@/types";
+import { Button } from "@/components/ui/button";
 
-// interface Props {
-//   verificationStatus?:DoctorVerificationStatus;
-// }
+interface Props extends DoctorParams {
+  // handleReview: (id: string) => void;
+  handleReview: (id: string) => Dispatch<SetStateAction<string>>;
+}
 
-interface Props extends DoctorParams {}
-
-export default function DoctorApprovalTable(params: Props) {
+export default function DoctorApprovalTable({
+  handleReview,
+  ...params
+}: Props) {
   const { data } = useSuspenseGetAllDoctors(params);
 
   const doctors = data?.data || [];
@@ -36,15 +38,21 @@ export default function DoctorApprovalTable(params: Props) {
         </TableHeader>
         <TableBody>
           {doctors.map((doctor: any) => (
-            <TableRow key={doctor.id || doctor._id || doctor.email}>
-              {/* <TableCell className="font-medium">Mir Hussain</TableCell> */}
-              <TableCell className="font-medium">{doctor.name}</TableCell>
-              <TableCell className="font-medium">{doctor.licenseNumber}</TableCell>
-              <TableCell className="font-medium">{doctor.email}</TableCell>
-              <TableCell className="font-medium">{doctor.contactNumber ?doctor.contactNumber : "-"}</TableCell>
-              <TableCell className="font-medium">{doctor.specialization}</TableCell>
+            <TableRow key={doctor.id}>
+              <TableCell>{doctor.name}</TableCell>
+              <TableCell>{doctor.licenseNumber}</TableCell>
+              <TableCell>{doctor.email}</TableCell>
+              <TableCell>
+                {doctor.contactNumber ? doctor.contactNumber : "-"}
+              </TableCell>
+              <TableCell>{doctor.specialization}</TableCell>
               <TableCell className="text-right">
-                <DoctorReviewSheet />
+                <Button
+                  variant="outline"
+                  onClick={() => handleReview(doctor.id)}
+                >
+                  Review
+                </Button>
               </TableCell>
             </TableRow>
           ))}

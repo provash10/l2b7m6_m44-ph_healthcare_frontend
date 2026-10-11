@@ -6,6 +6,7 @@ import { Suspense, useState } from "react";
 import DoctorApprovalTableLoading from "./doctor-approval-table-loading";
 import type { DoctorParams, DoctorVerificationStatus } from "@/types";
 import { Input } from "@/components/ui/input";
+import DoctorReviewSheet from "./doctor-review-sheet";
 
 const verificationStatus: ["ALL" | DoctorVerificationStatus, string][] = [
   // tuple
@@ -18,6 +19,9 @@ const verificationStatus: ["ALL" | DoctorVerificationStatus, string][] = [
 export default function DoctorApprovalTabs() {
   const [tab, settab] = useState<"ALL" | DoctorVerificationStatus>("ALL");
   console.log(tab);
+
+  const [selectedId, setSelectedId] = useState("");
+
 
   const queryParams: DoctorParams = {
     page: 1,
@@ -58,7 +62,7 @@ export default function DoctorApprovalTabs() {
     </Suspense> */}
 
     <Suspense fallback={<DoctorApprovalTableLoading/>}>
-      <DoctorApprovalTable  {...queryParams}/>
+      <DoctorApprovalTable  {...queryParams} handleReview ={setSelectedId}/>
      
       {/* // verificationStatus={tab} 
       // page={1} 
@@ -66,6 +70,10 @@ export default function DoctorApprovalTabs() {
       // searchTerm={"asdef"} */}
 
     </Suspense>
+
+    <DoctorReviewSheet 
+    selectedId = {selectedId}
+    onClose = {() => setSelectedId("")} />
 
     </>
   );
