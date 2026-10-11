@@ -11,8 +11,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
-import { useGetAllDoctors } from "@/hooks";
-import { DoctorParams } from "@/types";
+import { useApproveDoctor, useGetAllDoctors } from "@/hooks";
+import { ApproveDoctorPayload, DoctorParams } from "@/types";
 import { useState } from "react";
 
 interface Props extends DoctorParams{
@@ -25,17 +25,46 @@ export default function DoctorReviewSheet(
    Props) {
 
     const [confirmRejection,setConfirmRejection] = useState(false);
+    const [rejectionReason, setRejectionReason] = useState("");
+    console.log(rejectionReason)
+
 
   const {data} = useGetAllDoctors(params);
   console.log("From Inside Sheet Component", data);
+
+  const {mutate : verify, isPending} = useApproveDoctor();
 
  
 
   const selectedDoctor = data?.data?.find((doctor)=> doctor.id === selectedId);
   console.log(selectedDoctor);
 
-  const handleReviewAction = () => {
+  const handleClose = () => {
     setConfirmRejection(false);
+    setRejectionReason("");
+    onClose();
+
+  };
+
+  const handleReviewAction = (status: "APPROVED" | "REJECTED") => {
+    const reviewData: ApproveDoctorPayload = {
+      doctorId: selectedId,
+      verificationStatus: status,
+      rejectionReason: rejectionReason,
+    };
+
+    verify(reviewData,{
+      onSuccess : (res) => {
+        console.log("Success", res)
+        handleClose();
+      },
+      onError : () => {
+        console.log("Error", error)
+      }
+    });
+
+    console.log(reviewData);
+    // handleClose();
   };
 
   if(!selectedDoctor){
@@ -44,7 +73,7 @@ export default function DoctorReviewSheet(
 
 
   return (
-    <Sheet open={!!selectedId} onOpenChange={() => onClose()}>
+    <Sheet open={!!selectedId} onOpenChange={handleClose}>
       <SheetContent side="left">
         <SheetHeader>
           <SheetTitle>Review and Take Action</SheetTitle>
@@ -56,13 +85,53 @@ export default function DoctorReviewSheet(
         <SheetFooter>
           {confirmRejection ? (
             <div className="flex flex-col gap-3">
-              <Textarea/>
-              <Button onClick={handleReviewAction} variant="outline">Confirmed Reject</Button>
+              <Textarea
+                placeholder="Enter rejection reason..."
+                className="border-2 border-gray-400 focus-visible:border-primary"
+                value={rejectionReason}
+                onChange={(e) => setRejectionReason(e.target.value)}
+              />
+
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleClose}
+                  variant="outline"
+                  size="lg"
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => handleReviewAction("REJECTED")}
+                  variant="destructive"
+                  size="lg"
+                  className="flex-1"
+                  disabled={!rejectionReason}
+                >
+                  Confirm Rejection
+                </Button>
+              </div>
             </div>
-          ) : (<div className="flex justify-between gap-3 p-5">
-            <Button onClick={()=>setConfirmRejection(true)} className="flex-1 bg-amber-500" variant="destructive" size="lg">Reject</Button>
-             <Button onClick={handleReviewAction} className="flex-1" variant="default" size="lg">Approve</Button>
-          </div>)}
+          ) : (
+            <div className="flex gap-2">
+              <Button
+                onClick={() => setConfirmRejection(true)}
+                variant="destructive"
+                size="lg"
+                className="flex-1"
+              >
+                Reject
+              </Button>
+              <Button
+                onClick={() => handleReviewAction("APPROVED")}
+                variant="default"
+                size="lg"
+                className="flex-1"
+              >
+                Approve
+              </Button>
+            </div>
+          )}
         </SheetFooter>
 
       </SheetContent>

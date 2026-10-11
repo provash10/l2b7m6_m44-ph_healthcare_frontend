@@ -60,3 +60,9 @@ export interface DoctorParams {
   searchTerm?: string;
   sortOrder?: "desc" | "asc";
 }
+
+export interface ApproveDoctorPayload {
+  doctorId: string;
+  verificationStatus: "APPROVED" | "REJECTED";
+  rejectionReason?: string;
+}
