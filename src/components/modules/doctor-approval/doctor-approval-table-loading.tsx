@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 
+
 export default function DoctorApprovalTableLoading() {
   return (
     <div className="border rounded-lg">
