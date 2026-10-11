@@ -72,8 +72,9 @@ export default function DoctorApprovalTabs() {
     </Suspense>
 
     <DoctorReviewSheet 
-    selectedId = {selectedId}
-    onClose = {() => setSelectedId("")} />
+      {...queryParams}
+      selectedId = {selectedId}
+      onClose = {() => setSelectedId("")} />
 
     </>
   );
