@@ -58,7 +58,7 @@ export default function DoctorReviewSheet(
         console.log("Success", res)
         handleClose();
       },
-      onError : () => {
+      onError : (error: any) => {
         console.log("Error", error)
       }
     });
