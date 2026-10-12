@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import {
   Pagination,
   PaginationContent,
@@ -34,18 +34,32 @@ const getButtonArray = (totalPages : number, page : number) : (number | "ellipsi
     // return [1, "ellipsis", 4,5,6, "ellipsis", totalPages];
     return [1, "ellipsis", page-1, page, page+1,"ellipsis", totalPages];
 }
-export default function TablePagination() {
 
-    const [page, setPage] = useState(1);
-    const totalPages = 20;
+interface Props {
+  totalPages: number;
+  handlePageChange: Dispatch<SetStateAction<number>>;
+  page: number;
+}
+
+export default function TablePagination({
+  totalPages,
+  handlePageChange,
+  page,
+}: Props) {
+
+    // const [page, setPage] = useState(1); //keep tabs page
+    // const totalPages = 20;  //interface
     // const totalPages = 8;
     // console.log(getButtonArray(totalPages))
     console.log(page);
 
     const goToPage = (page: number) =>{
-        setPage(page);
+        handlePageChange(page);
     }
 
+    if(totalPages <=1){
+      return null;
+    }
 
   return (
     <Pagination>
@@ -85,9 +99,9 @@ export default function TablePagination() {
               <PaginationEllipsis />
             </PaginationItem>
           ) : (
-            <PaginationItem key={`page-${item}-${index}`}>
+            <PaginationItem key={item}>
               <PaginationLink
-                onClick={() => setPage(item as number)}
+                onClick={() => handlePageChange(item as number)}
                 isActive={page === item}
               >
                 {item}

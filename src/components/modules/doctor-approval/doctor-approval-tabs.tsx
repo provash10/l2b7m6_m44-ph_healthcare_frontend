@@ -27,11 +27,19 @@ export default function DoctorApprovalTabs() {
   const [searchInput, setSearchInput] = useState("");
   const debounceSearch = useDebounce(searchInput);
   console.log({searchInput,debounceSearch});
+    const [page, setPage] = useState(1);
+
+    const handleSearch = (e) => {
+      setSearchInput(e.target.value);
+      setPage(1);
+    }
 
 
 
   const queryParams: DoctorParams = {
-    page: 1,
+    // page: 1,
+    // limit: 10,
+    page : page,
     limit: 10,
     ...(tab === "ALL" ? {} : { verificationStatus: tab }),
     ...(debounceSearch ? { searchTerm: debounceSearch } : {}),
@@ -42,7 +50,8 @@ export default function DoctorApprovalTabs() {
     <div className="flex justify-between items-center my-5">
       
       <div>
-        <Input onChange={(e) => setSearchInput(e.target.value)} 
+        {/* <Input onChange={(e) => setSearchInput(e.target.value)}  */}
+         <Input onChange={(e) => handleSearch(e)} 
         type="search" placeholder="Search By Name or Email"/>
       </div>
 
@@ -72,7 +81,11 @@ export default function DoctorApprovalTabs() {
     </Suspense> */}
 
     <Suspense fallback={<DoctorApprovalTableLoading/>}>
-      <DoctorApprovalTable  {...queryParams} handleReview ={setSelectedId}/>
+      <DoctorApprovalTable
+        {...queryParams}
+        handleReview={setSelectedId}
+        handlePageChange={setPage}
+      />
      
       {/* // verificationStatus={tab} 
       // page={1} 
@@ -81,7 +94,7 @@ export default function DoctorApprovalTabs() {
 
     </Suspense>
 
-    <TablePagination/>
+    
 
     <DoctorReviewSheet 
       {...queryParams}
