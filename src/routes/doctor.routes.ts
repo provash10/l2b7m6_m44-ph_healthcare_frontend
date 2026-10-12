@@ -12,8 +12,7 @@ export const doctorRoutes = [
         },
         {
           title: "Create Schedule",
-        //   url: "/admin/approv-doctor",
-        url: `${prefix}`,
+          url: `${prefix}/schedules`,
         },
       ],
     },

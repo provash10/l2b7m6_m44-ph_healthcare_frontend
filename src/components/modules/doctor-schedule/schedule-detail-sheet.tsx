@@ -10,7 +10,7 @@ import {
 import type { Schedule } from "@/types";
 
 interface Props {
-  schedule: Schedule;
+  schedule?: Schedule | null;
   open: boolean;
   onClose: (open: boolean) => void;
 }
@@ -20,6 +20,7 @@ export default function ScheduleDetailSheet({
   open,
   onClose,
 }: Props) {
+  if (!schedule) return null;
   return (
     <Sheet open={open} onOpenChange={onClose}>
       <SheetContent side="right">

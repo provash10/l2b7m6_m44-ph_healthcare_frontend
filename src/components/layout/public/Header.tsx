@@ -14,7 +14,7 @@ export default function Header() {
     { name: "About us", url: "/about-us" },
   ];
 
-  const dashboardRoute : Recored <UserRole,string>= {
+  const dashboardRoute : Record <UserRole,string>= {
     SUPER_ADMIN : "/admin",
     ADMIN: "/admin",
     DOCTOR: "/doctor",

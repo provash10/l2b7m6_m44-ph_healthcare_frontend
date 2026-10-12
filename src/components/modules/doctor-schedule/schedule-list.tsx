@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import type { ScheduleParams, ScheduleStatus } from "@/types";
 import ScheduleTable from "./schedule-table";
 import ScheduleListLoading from "./schedule-list-loading";
+import ScheduleCreateDialog from "./schedule-create-dialog";
 
 const statuses: ["ALL" | ScheduleStatus, string][] = [
   ["ALL", "All"],
@@ -23,7 +24,7 @@ export default function ScheduleList() {
 
   return (
     <>
-      <div className="my-5 flex justify-between gap-3">
+      <div className="my-5 flex flex-wrap items-center justify-between gap-3">
         <Tabs value={tab} onValueChange={(value) => setTab(value as "ALL" | ScheduleStatus)}>
           <TabsList>
             {statuses.map(([value, label]) => (
@@ -33,7 +34,7 @@ export default function ScheduleList() {
             ))}
           </TabsList>
         </Tabs>
-        <Button size="lg">Create Schedule</Button>
+        <ScheduleCreateDialog />
       </div>
 
       <Suspense fallback={<ScheduleListLoading />}>

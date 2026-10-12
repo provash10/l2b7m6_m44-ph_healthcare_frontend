@@ -13,8 +13,7 @@ import type { Dispatch, SetStateAction } from "react";
 import TablePagination from "@/components/ui/table-pagination";
 
 interface Props extends DoctorParams {
-  // handleReview: (id: string) => void;
-  handleReview: (id: string) => Dispatch<SetStateAction<string>>;
+  handleReview: (id: string) => void;
   handlePageChange: Dispatch<SetStateAction<number>>;
 }
 
