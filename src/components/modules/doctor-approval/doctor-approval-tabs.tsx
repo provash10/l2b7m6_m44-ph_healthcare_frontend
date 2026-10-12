@@ -2,7 +2,7 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DoctorApprovalTable from "./doctor-approval-table";
-import { Suspense, useState } from "react";
+import { type ChangeEvent, Suspense, useState } from "react";
 import DoctorApprovalTableLoading from "./doctor-approval-table-loading";
 import type { DoctorParams, DoctorVerificationStatus } from "@/types";
 import { Input } from "@/components/ui/input";
@@ -29,10 +29,10 @@ export default function DoctorApprovalTabs() {
   console.log({searchInput,debounceSearch});
     const [page, setPage] = useState(1);
 
-    const handleSearch = (e) => {
-      setSearchInput(e.target.value);
-      setPage(1);
-    }
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(e.target.value);
+    setPage(1);
+  };
 
 
 
