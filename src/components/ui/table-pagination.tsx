@@ -11,16 +11,40 @@ import {
   PaginationPrevious,
 } from "./pagination";
 
-const getButtonArray = (totalPages : number) =>{
-    return Array.from({length : totalPages},(_, index) => index + 1)
+const getButtonArray = (totalPages : number, page : number) : (number | "ellipsis")[] =>{
+    
+    if (totalPages <= 7) {
+        return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+    if(page<=4){
+        return [1,2,3,4,5,"ellipsis", totalPages];
+    }
+    if(page>= totalPages - 3){
+        return [
+            1, 
+            "ellipsis", 
+            totalPages - 4, 
+            totalPages - 3,
+            totalPages - 2,
+            totalPages - 1, 
+            totalPages
+        ];
+    }
+    // return Array.from({length : totalPages},(_, index) => index + 1)
+    // return [1, "ellipsis", 4,5,6, "ellipsis", totalPages];
+    return [1, "ellipsis", page-1, page, page+1,"ellipsis", totalPages];
 }
 export default function TablePagination() {
 
-    const [page, setpage] = useState(1);
-    const totalPages = 7;
+    const [page, setPage] = useState(1);
+    const totalPages = 20;
+    // const totalPages = 8;
     // console.log(getButtonArray(totalPages))
     console.log(page);
 
+    const goToPage = (page: number) =>{
+        setPage(page);
+    }
 
 
   return (
@@ -28,13 +52,20 @@ export default function TablePagination() {
       <PaginationContent>
 
         <PaginationItem>
-            <PaginationPrevious></PaginationPrevious>
+            <PaginationPrevious 
+            onClick={()=>goToPage(page-1)}
+            aria-disabled = {page === 1}
+            className={
+                page === 1 ? "pointer-events-none opacity-50" : undefined
+            }
+            >
+            </PaginationPrevious>
         </PaginationItem>
 
         {/* Pagination Ellipsis */}
-        <PaginationItem>
+        {/* <PaginationItem>
             <PaginationEllipsis></PaginationEllipsis>
-        </PaginationItem>
+        </PaginationItem> */}
 
         {/* <PaginationItem>
           <PaginationLink>1</PaginationLink>
@@ -48,18 +79,31 @@ export default function TablePagination() {
           <PaginationLink>3</PaginationLink>
         </PaginationItem> */}
 
-        {
-            getButtonArray(totalPages).map((item) => (
-                 <PaginationItem key={item}>
-          <PaginationLink onClick={()=>setpage(item)} isActive={page === item}>
-            {item}
-            </PaginationLink>
-        </PaginationItem> 
-            ))
-        }
+        {getButtonArray(totalPages, page).map((item, index) =>
+          item === "ellipsis" ? (
+            <PaginationItem key={`ellipsis${index}`}>
+              <PaginationEllipsis />
+            </PaginationItem>
+          ) : (
+            <PaginationItem key={`page-${item}-${index}`}>
+              <PaginationLink
+                onClick={() => setPage(item as number)}
+                isActive={page === item}
+              >
+                {item}
+              </PaginationLink>
+            </PaginationItem>
+          )
+        )}
 
         <PaginationItem>
-            <PaginationNext></PaginationNext>
+            <PaginationNext
+            onClick={()=>goToPage(page+1)}
+            aria-disabled = {page === totalPages}
+            className={
+                page === totalPages ? "pointer-events-none opacity-50" : undefined
+            }
+            ></PaginationNext>
         </PaginationItem>
 
       </PaginationContent>
