@@ -4,6 +4,8 @@ import { useForm } from "@tanstack/react-form";
 import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Calendar } from "../ui/calendar";
 import { useCreateSchedule } from "@/hooks";
 import { toast } from "@/components/ui/toast";
 import { Spinner } from "../ui/spinner";
@@ -18,11 +20,13 @@ export default function CreateScheduleForm({ onSuccess }: Props) {
   const form = useForm({
     defaultValues: {
       date: "",
-      startTime: "10:30:00",
-      endTime: "10:30:00",
+      startTime: "",
+      endTime: "",
       meetingLink: "",
     },
     onSubmit: ({ value }) => {
+      console.log(value);
+
       const startTime = value.startTime || "10:30:00";
       const endTime = value.endTime || "10:30:00";
 
@@ -77,19 +81,30 @@ export default function CreateScheduleForm({ onSuccess }: Props) {
           {(field) => {
             const isInvalid =
               field.state.meta.isTouched && !field.state.meta.isValid;
+            const selected = field.state.value
+              ? new Date(field.state.value)
+              : undefined;
 
             return (
               <Field data-invalid={isInvalid}>
                 <FieldLabel htmlFor={field.name}>Date</FieldLabel>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  type="date"
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  onBlur={field.handleBlur}
-                  autoComplete="off"
-                  aria-invalid={isInvalid}
-                />
+                <Popover>
+                  <PopoverTrigger render={<Button variant="outline" />}>
+                    {field.state.value
+                      ? new Date(field.state.value).toLocaleDateString()
+                      : "Select Date"}
+                  </PopoverTrigger>
+
+                  <PopoverContent>
+                    <Calendar
+                      mode="single"
+                      selected={selected}
+                      onSelect={(date) =>
+                        field.handleChange(date ? date.toISOString() : "")
+                      }
+                    />
+                  </PopoverContent>
+                </Popover>
                 {isInvalid && <FieldError errors={field.state.meta.errors} />}
               </Field>
             );
@@ -165,7 +180,7 @@ export default function CreateScheduleForm({ onSuccess }: Props) {
           }}
         </form.Field>
 
-        <Button type="submit" disabled={isPending} className="w-full">
+        <Button type="submit" disabled={isPending}>
           {isPending ? (
             <span className="flex items-center gap-2">
               <Spinner className="size-4" /> Submitting...
