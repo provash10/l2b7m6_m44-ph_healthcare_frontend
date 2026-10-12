@@ -8,6 +8,7 @@ import type { DoctorParams, DoctorVerificationStatus } from "@/types";
 import { Input } from "@/components/ui/input";
 import DoctorReviewSheet from "./doctor-review-sheet";
 import useDebounce from "@/hooks/debounce.hook";
+import TablePagination from "@/components/ui/table-pagination";
 
 const verificationStatus: ["ALL" | DoctorVerificationStatus, string][] = [
   // tuple
@@ -79,6 +80,8 @@ export default function DoctorApprovalTabs() {
       // searchTerm={"asdef"} */}
 
     </Suspense>
+
+    <TablePagination/>
 
     <DoctorReviewSheet 
       {...queryParams}
