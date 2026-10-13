@@ -1,5 +1,5 @@
 import apiClient from "@/lib/apiClient";
-import {
+import type {
   ApiResponse,
   ApproveDoctorPayload,
   Doctor,
@@ -25,10 +25,13 @@ export function applyAsDoctor(payload: DoctorApplicationPayload) {
 }
 
 export function verifyDoctorAccount(payload: VerifyAccountPayload) {
-  return apiClient<ApiResponse<Doctor[]>>("/doctor/apply-as-doctor/verify-email", {
-    method: "POST",
-    body: payload,
-  });
+  return apiClient<ApiResponse<Doctor[]>>(
+    "/doctor/apply-as-doctor/verify-email",
+    {
+      method: "POST",
+      body: payload,
+    },
+  );
 }
 
 export function getAllDoctors(params?: DoctorParams) {
@@ -45,11 +48,11 @@ export function approveDoctor(payload: ApproveDoctorPayload) {
 }
 
 export function getAllPublicDoctors(params?: DoctorParams) {
-  return apiClient<ApiResponse<Doctor[]>>("/doctor", {
+  return apiClient<ApiResponse<Doctor[]>>("/doctor/public/all-doctors", {
     params,
   });
 }
 
 export function getPublicDoctorProfile(doctorId: string) {
-  return apiClient<ApiResponse<Doctor>>(`/doctor/${doctorId}`);
+  return apiClient<ApiResponse<Doctor>>(`/doctor/public/${doctorId}`);
 }

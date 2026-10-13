@@ -37,7 +37,7 @@ const getButtonArray = (totalPages : number, page : number) : (number | "ellipsi
 
 interface Props {
   totalPages: number;
-  handlePageChange: Dispatch<SetStateAction<number>>;
+  handlePageChange: Dispatch<SetStateAction<number>> | ((page: number) => void);
   page: number;
 }
 

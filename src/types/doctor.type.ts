@@ -61,6 +61,14 @@ export interface DoctorParams {
   sortOrder?: "desc" | "asc";
 }
 
+export interface PublicDoctorParams {
+  page?: number;
+  limit?: number;
+  searchTerm?: string;
+  specialization?: string;
+  sortOrder?: "desc" | "asc";
+}
+
 export interface ApproveDoctorPayload {
   doctorId: string;
   verificationStatus: "APPROVED" | "REJECTED";

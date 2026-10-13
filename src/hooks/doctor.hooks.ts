@@ -6,7 +6,7 @@ import {
   getPublicDoctorProfile,
   verifyDoctorAccount,
 } from "@/api";
-import { DoctorParams } from "@/types";
+import { DoctorParams, PublicDoctorParams } from "@/types";
 import {
   useMutation,
   useQuery,
@@ -52,6 +52,13 @@ export function useSuspenseGetAllDoctors(params: DoctorParams) {
   return useSuspenseQuery({
     queryKey: ["doctors", params],
     queryFn: () => getAllDoctors(params),
+  });
+}
+
+export function useSuspenseGetPublicDoctors(params?: DoctorParams | PublicDoctorParams) {
+  return useSuspenseQuery({
+    queryKey: ["doctor", "public", params],
+    queryFn: () => getAllPublicDoctors(params),
   });
 }
 
