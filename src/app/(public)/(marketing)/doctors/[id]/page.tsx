@@ -55,12 +55,16 @@ export default async function page({
     redirect("/login");
   }
 
+  if (id === "schedules") {
+    redirect("/doctor/schedules");
+  }
+
   let doctor = null;
   try {
     const data = await getPublicDoctorProfile(id);
     doctor = data?.data;
-  } catch (error) {
-    console.error("Doctor profile fetch error:", error);
+  } catch {
+    doctor = null;
   }
 
   if (!doctor) {

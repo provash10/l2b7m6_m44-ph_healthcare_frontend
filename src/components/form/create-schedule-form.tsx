@@ -26,7 +26,7 @@ export default function CreateScheduleForm({ handleClose }: Props) {
       date: "",
       startTime: "",
       endTime: "",
-      meetingLink: "https://meet.google.com/aiu-ctor-moh",
+      meetingLink: "",
     },
     validators: {
       onSubmit: scheduleSchema,
@@ -181,6 +181,8 @@ export default function CreateScheduleForm({ handleClose }: Props) {
                   id={field.name}
                   name={field.name}
                   type="url"
+                  placeholder="https://meet.google.com/aiu-ctor-moh"
+                  value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
                   onBlur={field.handleBlur}
                   autoComplete="off"

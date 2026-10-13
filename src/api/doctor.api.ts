@@ -7,6 +7,7 @@ import type {
   DoctorParams,
   PublicDoctorParams,
   PublicDoctorProfile,
+  Schedule,
   VerifyAccountPayload,
 } from "@/types";
 
@@ -66,7 +67,7 @@ export function getTodayScheduleByDoctor(params: {
   page?: number;
   limit?: number;
 }) {
-  return apiClient("/schedule/todays-schedule", {
+  return apiClient<ApiResponse<Schedule[]>>("/schedule/todays-schedule", {
     params,
   });
 }
