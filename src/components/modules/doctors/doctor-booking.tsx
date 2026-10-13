@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/toast";
 import {
   useBookAppointment,
@@ -8,7 +9,7 @@ import {
   useGetTodayScheduleByDoctor,
 } from "@/hooks";
 import apiClient from "@/lib/apiClient";
-import type { Schedule } from "@/types";
+import type { BookingConfirmation, Schedule } from "@/types";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -19,10 +20,9 @@ export default function DoctorBooking({ doctorId }: { doctorId: string }) {
   const { data: me, isPending: mePending } = useGetMe();
   const { data, isPending, error } = useGetTodayScheduleByDoctor({ doctorId });
   const { mutate: book, isPending: bookingPending } = useBookAppointment();
-  const [confirmation, setConfirmation] = useState<{
-    paymentUrl?: string;
-    schedule?: Schedule;
-  }>({});
+  const [confirmation, setConfirmation] = useState<BookingConfirmation | null>(
+    null
+  );
 
   const schedules = data?.data ?? [];
 
@@ -128,6 +128,7 @@ export default function DoctorBooking({ doctorId }: { doctorId: string }) {
   }
 
   return (
+    <>
     <div className="space-y-4">
       {confirmation?.paymentUrl && (
         <div className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 p-4 space-y-2">
@@ -173,5 +174,39 @@ export default function DoctorBooking({ doctorId }: { doctorId: string }) {
         ))}
       </div>
     </div>
+
+
+    {/* dialog */}
+    <Dialog open={!!confirmation} onOpenChange={(open) => {if(!open){
+        setConfirmation(null);
+    }}}>
+        <DialogContent>
+            <DialogHeader>
+                  <DialogTitle>
+                    Booking Successfull
+                   </DialogTitle>  
+                   <DialogDescription>
+                    Please Pay within 15 minutes to keep yout booking.
+                   </DialogDescription>
+                   <span>
+                    Date and Time:{" "} 
+                    {confirmation? format(confirmation?.schedule.startDateTime!, "PPP")  : "-"}
+                   </span>
+            </DialogHeader>
+
+            <DialogFooter>
+                <Button variant="outline" onClick={() => setConfirmation(null)}>Pay Later</Button>
+                <Button onClick={() => {
+                    if (confirmation?.paymentUrl) {
+                        window.location.href = confirmation.paymentUrl;
+                    }
+                }}>
+                    Pay Now
+                </Button>
+            </DialogFooter>
+            
+        </DialogContent>
+    </Dialog>
+    </>
   );
 }

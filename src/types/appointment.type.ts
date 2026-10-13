@@ -89,3 +89,8 @@ export interface CancelAppointmentPayload {
 export interface BookAppointmentResponse {
   paymentUrl: string;
 }
+
+export interface BookingConfirmation {
+  paymentUrl: string;
+  schedule: Schedule;
+}
