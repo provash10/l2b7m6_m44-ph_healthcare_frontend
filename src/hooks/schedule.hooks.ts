@@ -16,26 +16,30 @@ export function useCreateSchedule() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: CreateSchedulePayload) => createSchedule(payload),
+    mutationFn: createSchedule,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["schedules"] });
     },
   });
 }
 
-export function useGetMySchedules(params?: ScheduleParams) {
+export function useMySchedules(params?: ScheduleParams) {
   return useQuery({
     queryKey: ["schedules", params],
     queryFn: () => getMySchedules(params),
   });
 }
 
-export function useSuspenseGetMySchedules(params?: ScheduleParams) {
+export const useGetMySchedules = useMySchedules;
+
+export function useSuspenseMySchedules(params?: ScheduleParams) {
   return useSuspenseQuery({
     queryKey: ["schedules", params],
     queryFn: () => getMySchedules(params),
   });
 }
+
+export const useSuspenseGetMySchedules = useSuspenseMySchedules;
 
 export function usePublishSchedule() {
   const queryClient = useQueryClient();

@@ -11,6 +11,7 @@ import { useCreateSchedule } from "@/hooks";
 import { toast } from "@/components/ui/toast";
 import { Spinner } from "../ui/spinner";
 import { format } from "date-fns";
+import { scheduleSchema } from "@/validation";
 
 interface Props {
   onSuccess?: () => void;
@@ -25,12 +26,17 @@ export default function CreateScheduleForm({ onSuccess }: Props) {
       date: "",
       startTime: "",
       endTime: "",
-      meetingLink: "",
+      meetingLink: "https://meet.google.com/aiu-ctor-moh",
+    },
+    validators: {
+      onSubmit: scheduleSchema,
     },
     onSubmit: ({ value }) => {
       const scheduleValue = {
-        startDateTime: `${value.date}T${value.startTime}:00.000Z`,
-        endDateTime: `${value.date}T${value.endTime}:00.000Z`,
+        startDateTime: new Date(
+          `${value.date}T${value.startTime}`
+        ).toISOString(),
+        endDateTime: new Date(`${value.date}T${value.endTime}`).toISOString(),
         meetingLink: value.meetingLink,
       };
 
@@ -40,20 +46,21 @@ export default function CreateScheduleForm({ onSuccess }: Props) {
         scheduleValue,
         {
           onSuccess: (res) => {
-            if (res.success) {
+            if (!res.success) {
               toast.add({
-                title: "Schedule Created",
-                description: "Your schedule has been created successfully.",
-                type: "success",
-              });
-              onSuccess?.();
-            } else {
-              toast.add({
-                title: "Failed",
-                description: res.message || "Failed to create schedule",
+                title: "Server Failure",
+                description: "Something went wrong. Please try again",
                 type: "error",
               });
+              return;
             }
+
+            toast.add({
+              title: "Schedule Created",
+              description: "Your schedule has been created successfully.",
+              type: "success",
+            });
+            onSuccess?.();
           },
           onError: (err: any) => {
             toast.add({
