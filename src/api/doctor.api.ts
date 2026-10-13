@@ -43,3 +43,13 @@ export function approveDoctor(payload: ApproveDoctorPayload) {
     body: payload,
   });
 }
+
+export function getAllPublicDoctors(params?: DoctorParams) {
+  return apiClient<ApiResponse<Doctor[]>>("/doctor", {
+    params,
+  });
+}
+
+export function getPublicDoctorProfile(doctorId: string) {
+  return apiClient<ApiResponse<Doctor>>(`/doctor/${doctorId}`);
+}

@@ -2,6 +2,7 @@ import {
   createSchedule,
   deleteSchedule,
   getMySchedules,
+  getTodaysSchedulesByDoctor,
   publishSchedule,
 } from "@/api";
 import { CreateSchedulePayload, ScheduleParams } from "@/types";
@@ -60,5 +61,17 @@ export function useDeleteSchedule() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["schedules"] });
     },
+  });
+}
+
+export function useTodaysSchedulesByDoctor(params: {
+  doctorId: string;
+  page?: number;
+  limit?: number;
+}) {
+  return useQuery({
+    queryKey: ["schedules", "today", params],
+    queryFn: () => getTodaysSchedulesByDoctor(params),
+    enabled: !!params?.doctorId,
   });
 }

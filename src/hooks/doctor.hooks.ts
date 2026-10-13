@@ -1,27 +1,54 @@
-import { applyAsDoctor, approveDoctor, getAllDoctors, verifyDoctorAccount } from "@/api";
+import {
+  applyAsDoctor,
+  approveDoctor,
+  getAllDoctors,
+  getAllPublicDoctors,
+  getPublicDoctorProfile,
+  verifyDoctorAccount,
+} from "@/api";
 import { DoctorParams } from "@/types";
-import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 
-export function useApplyAsDoctor(){
-    return useMutation({
-        mutationFn: applyAsDoctor
-    })
+export function useApplyAsDoctor() {
+  return useMutation({
+    mutationFn: applyAsDoctor,
+  });
 }
 
-export function useVerifyDoctorAccount(){
-    return useMutation({
-        mutationFn: verifyDoctorAccount
-    })
+export function useVerifyDoctorAccount() {
+  return useMutation({
+    mutationFn: verifyDoctorAccount,
+  });
 }
 
-export function useGetAllDoctors(params?: DoctorParams) {
+export function useGetAllDoctors(params: DoctorParams) {
   return useQuery({
     queryKey: ["doctors", params],
     queryFn: () => getAllDoctors(params),
   });
 }
 
-export function useSuspenseGetAllDoctors(params?: DoctorParams) {
+export function useGetAllPublicDoctors(params: DoctorParams) {
+  return useQuery({
+    queryKey: ["doctor", "public", params],
+    queryFn: () => getAllPublicDoctors(params),
+  });
+}
+
+export function usePublicDoctorProfile(doctorId: string) {
+  return useQuery({
+    queryKey: ["doctor", "public", doctorId],
+    queryFn: () => getPublicDoctorProfile(doctorId),
+    enabled: !!doctorId,
+  });
+}
+
+export function useSuspenseGetAllDoctors(params: DoctorParams) {
   return useSuspenseQuery({
     queryKey: ["doctors", params],
     queryFn: () => getAllDoctors(params),
