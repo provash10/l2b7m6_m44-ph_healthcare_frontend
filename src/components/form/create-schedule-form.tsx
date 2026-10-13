@@ -14,10 +14,10 @@ import { format } from "date-fns";
 import { scheduleSchema } from "@/validation";
 
 interface Props {
-  onSuccess?: () => void;
+  handleClose: () => void;
 }
 
-export default function CreateScheduleForm({ onSuccess }: Props) {
+export default function CreateScheduleForm({ handleClose }: Props) {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const { mutate: create, isPending } = useCreateSchedule();
 
@@ -60,15 +60,16 @@ export default function CreateScheduleForm({ onSuccess }: Props) {
               description: "Your schedule has been created successfully.",
               type: "success",
             });
-            onSuccess?.();
+            handleClose();
           },
           onError: (err: any) => {
             toast.add({
-              title: "Error",
+              title: "Schedule Creation Failed",
               description:
-                err?.message || "Something went wrong while creating schedule",
+                err?.message || "Something went wrong. Please try again",
               type: "error",
             });
+            handleClose();
           },
         }
       );
@@ -98,15 +99,14 @@ export default function CreateScheduleForm({ onSuccess }: Props) {
                 <FieldLabel htmlFor={field.name}>Date</FieldLabel>
                 <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                   <PopoverTrigger render={<Button type="button" variant="outline" />}>
-                    {field.state.value
-                      ? new Date(field.state.value).toLocaleDateString()
-                      : "Select Date"}
+                    {selected ? `${format(selected, "PPP")}` : "Select Date"}
                   </PopoverTrigger>
 
-                  <PopoverContent>
+                  <PopoverContent className="w-auto p-0">
                     <Calendar
                       mode="single"
                       selected={selected}
+                      disabled={{ before: new Date() }}
                       onSelect={(date) => {
                         if (date) {
                           field.handleChange(format(date, "yyyy-MM-dd"));

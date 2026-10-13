@@ -17,18 +17,18 @@ export default function ScheduleCreateDialog() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button size="lg">Create Schedule</Button>
+      <DialogTrigger render={<Button size="lg" />}>
+        Create Schedule
       </DialogTrigger>
 
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create Schedule</DialogTitle>
           <DialogDescription>
-            This Schedule Will Be Visible To Patient
+            This schedule will be visible to patient
           </DialogDescription>
         </DialogHeader>
-        <CreateScheduleForm onSuccess={() => setOpen(false)} />
+        <CreateScheduleForm handleClose={() => setOpen(false)} />
       </DialogContent>
     </Dialog>
   );
