@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
@@ -9,12 +10,14 @@ import { Calendar } from "../ui/calendar";
 import { useCreateSchedule } from "@/hooks";
 import { toast } from "@/components/ui/toast";
 import { Spinner } from "../ui/spinner";
+import { format } from "date-fns";
 
 interface Props {
   onSuccess?: () => void;
 }
 
 export default function CreateScheduleForm({ onSuccess }: Props) {
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const { mutate: create, isPending } = useCreateSchedule();
 
   const form = useForm({
@@ -25,20 +28,16 @@ export default function CreateScheduleForm({ onSuccess }: Props) {
       meetingLink: "",
     },
     onSubmit: ({ value }) => {
-      console.log(value);
+      const scheduleValue = {
+        startDateTime: `${value.date}T${value.startTime}:00.000Z`,
+        endDateTime: `${value.date}T${value.endTime}:00.000Z`,
+        meetingLink: value.meetingLink,
+      };
 
-      const startTime = value.startTime || "10:30:00";
-      const endTime = value.endTime || "10:30:00";
-
-      const startDateTime = new Date(`${value.date}T${startTime}`).toISOString();
-      const endDateTime = new Date(`${value.date}T${endTime}`).toISOString();
+      console.log(scheduleValue);
 
       create(
-        {
-          startDateTime,
-          endDateTime,
-          meetingLink: value.meetingLink,
-        },
+        scheduleValue,
         {
           onSuccess: (res) => {
             if (res.success) {
@@ -82,14 +81,16 @@ export default function CreateScheduleForm({ onSuccess }: Props) {
             const isInvalid =
               field.state.meta.isTouched && !field.state.meta.isValid;
             const selected = field.state.value
-              ? new Date(field.state.value)
+              ? new Date(`${field.state.value}T00:00:00`)
               : undefined;
+
+            console.log({ selected });
 
             return (
               <Field data-invalid={isInvalid}>
                 <FieldLabel htmlFor={field.name}>Date</FieldLabel>
-                <Popover>
-                  <PopoverTrigger render={<Button variant="outline" />}>
+                <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+                  <PopoverTrigger render={<Button type="button" variant="outline" />}>
                     {field.state.value
                       ? new Date(field.state.value).toLocaleDateString()
                       : "Select Date"}
@@ -99,9 +100,13 @@ export default function CreateScheduleForm({ onSuccess }: Props) {
                     <Calendar
                       mode="single"
                       selected={selected}
-                      onSelect={(date) =>
-                        field.handleChange(date ? date.toISOString() : "")
-                      }
+                      onSelect={(date) => {
+                        if (date) {
+                          field.handleChange(format(date, "yyyy-MM-dd"));
+                          field.handleBlur();
+                          setIsCalendarOpen(false);
+                        }
+                      }}
                     />
                   </PopoverContent>
                 </Popover>
@@ -111,51 +116,51 @@ export default function CreateScheduleForm({ onSuccess }: Props) {
           }}
         </form.Field>
 
-        <form.Field name="startTime">
-          {(field) => {
-            const isInvalid =
-              field.state.meta.isTouched && !field.state.meta.isValid;
+        <div className="grid grid-cols-2 gap-3">
+          <form.Field name="startTime">
+            {(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
 
-            return (
-              <Field className="w-32" data-invalid={isInvalid}>
-                <FieldLabel htmlFor="start-time-picker">Start Time</FieldLabel>
-                <Input
-                  type="time"
-                  id="start-time-picker"
-                  step="1"
-                  defaultValue="10:30:00"
-                  className="appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  onBlur={field.handleBlur}
-                />
-                {isInvalid && <FieldError errors={field.state.meta.errors} />}
-              </Field>
-            );
-          }}
-        </form.Field>
+              return (
+                <Field data-invalid={isInvalid}>
+                  <FieldLabel htmlFor={field.name}>Start Time</FieldLabel>
+                  <Input
+                    type="time"
+                    id={field.name}
+                    name={field.name}
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    onBlur={field.handleBlur}
+                  />
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </Field>
+              );
+            }}
+          </form.Field>
 
-        <form.Field name="endTime">
-          {(field) => {
-            const isInvalid =
-              field.state.meta.isTouched && !field.state.meta.isValid;
+          <form.Field name="endTime">
+            {(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
 
-            return (
-              <Field className="w-32" data-invalid={isInvalid}>
-                <FieldLabel htmlFor="end-time-picker">End Time</FieldLabel>
-                <Input
-                  type="time"
-                  id="end-time-picker"
-                  step="1"
-                  defaultValue="10:30:00"
-                  className="appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  onBlur={field.handleBlur}
-                />
-                {isInvalid && <FieldError errors={field.state.meta.errors} />}
-              </Field>
-            );
-          }}
-        </form.Field>
+              return (
+                <Field data-invalid={isInvalid}>
+                  <FieldLabel htmlFor={field.name}>End Time</FieldLabel>
+                  <Input
+                    type="time"
+                    id={field.name}
+                    name={field.name}
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    onBlur={field.handleBlur}
+                  />
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </Field>
+              );
+            }}
+          </form.Field>
+        </div>
 
         <form.Field name="meetingLink">
           {(field) => {
@@ -180,7 +185,7 @@ export default function CreateScheduleForm({ onSuccess }: Props) {
           }}
         </form.Field>
 
-        <Button type="submit" disabled={isPending}>
+        <Button type="submit" disabled={isPending} className="mt-10 w-full">
           {isPending ? (
             <span className="flex items-center gap-2">
               <Spinner className="size-4" /> Submitting...
