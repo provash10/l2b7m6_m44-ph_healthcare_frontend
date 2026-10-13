@@ -5,6 +5,8 @@ import type {
   Doctor,
   DoctorApplicationPayload,
   DoctorParams,
+  PublicDoctorParams,
+  PublicDoctorProfile,
   VerifyAccountPayload,
 } from "@/types";
 
@@ -47,12 +49,24 @@ export function approveDoctor(payload: ApproveDoctorPayload) {
   });
 }
 
-export function getAllPublicDoctors(params?: DoctorParams) {
+export function getAllPublicDoctors(params?: PublicDoctorParams) {
   return apiClient<ApiResponse<Doctor[]>>("/doctor/public/all-doctors", {
     params,
   });
 }
 
 export function getPublicDoctorProfile(doctorId: string) {
-  return apiClient<ApiResponse<Doctor>>(`/doctor/public/${doctorId}`);
+  return apiClient<ApiResponse<PublicDoctorProfile>>(
+    `/doctor/public/${doctorId}`,
+  );
+}
+
+export function getTodayScheduleByDoctor(params: {
+  doctorId?: string;
+  page?: number;
+  limit?: number;
+}) {
+  return apiClient("/schedule/todays-schedule", {
+    params,
+  });
 }

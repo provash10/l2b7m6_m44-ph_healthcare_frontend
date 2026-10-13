@@ -1,4 +1,5 @@
-import { User } from "./user.type";
+import type { Schedule } from "./schedule.type";
+import type { User } from "./user.type";
 
 export interface DoctorApplicationData {
   user: {
@@ -52,7 +53,6 @@ export interface Doctor {
   user: User;
 }
 
-
 export interface DoctorParams {
   verificationStatus?: DoctorVerificationStatus | "All";
   page?: number;
@@ -67,6 +67,10 @@ export interface PublicDoctorParams {
   searchTerm?: string;
   specialization?: string;
   sortOrder?: "desc" | "asc";
+}
+
+export interface PublicDoctorProfile extends Doctor {
+  schedules?: Schedule[];
 }
 
 export interface ApproveDoctorPayload {
