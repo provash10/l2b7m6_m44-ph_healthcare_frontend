@@ -26,7 +26,7 @@ export default function CreateScheduleForm({ handleClose }: Props) {
       date: "",
       startTime: "",
       endTime: "",
-      meetingLink: "",
+      meetingLink: "https://meet.google.com/aiu-ctor-moh",
     },
     validators: {
       onSubmit: scheduleSchema,
