@@ -19,7 +19,8 @@ export default function Header() {
     SUPER_ADMIN : "/admin",
     ADMIN: "/admin",
     DOCTOR: "/doctor",
-    PATIENT: "/patient"
+    // PATIENT: "/patient"
+    PATIENT: "/dashboard",
   }
 
   //have any user? 45-5 cls
